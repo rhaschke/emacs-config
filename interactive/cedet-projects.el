@@ -41,8 +41,8 @@
 (ede-cpp-root-project
  "rsc"
  :name                "RSC"
- :file                "~/src/rsc/rsc/CMakeLists.txt"
- :include-path        '("/rsc/src")
+ :file                "~/src/rsc/CMakeLists.txt"
+ :include-path        '("/src")
  :system-include-path '()
  :spp-table           '(("RSC_EXPORT" . ""))
  :local-variables     `((indent-tabs-mode    . nil)
@@ -51,7 +51,7 @@
 (ede-cpp-root-project
  "rsb"
  :name                "RSB"
- :file                "~/src/rsb/cpp/core/CMakeLists.txt"
+ :file                "~/src/rsb/rsb-cpp/CMakeLists.txt"
  :include-path        '("/src/rsb")
  :system-include-path '()
  :spp-table           '(("RSB_EXPORT" . ""))
@@ -62,7 +62,6 @@
  "rst"
  :name                "RST"
  :file                "~/src/rst/rst/CMakeLists.txt"
- :include-path        '("/include")
  :system-include-path '()
  :spp-table           '(("RST_EXPORT" . "")))
 
@@ -81,7 +80,7 @@
  :name                "RSB-XML"
  :file                "~/src/rsb-xml/rsb-xml-cpp/CMakeLists.txt"
  :include-path        '("/cpp/src")
- :system-include-path '("/local/vol/rsb/include")
+ :system-include-path '("/vol/rsb/include")
  :spp-table           '(("RSC_EXPORT" . "") ("RSB_EXPORT" . "") ("RST_EXPORT" . ""))
  :local-variables     `((indent-tabs-mode    . nil)
                         (c-indentation-style . "rsc")
