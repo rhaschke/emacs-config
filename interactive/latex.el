@@ -1,3 +1,6 @@
+;; Makes AUCTeX guess mode from file extension instead of content
+(setq TeX-force-default-mode t)
+
 ;; define some LaTeX specific keys
 (add-hook 'LaTeX-mode-hook
   (function (lambda ()

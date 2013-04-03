@@ -61,7 +61,7 @@
 (ede-cpp-root-project
  "rst"
  :name                "RST"
- :file                "~/src/rst/rst/CMakeLists.txt"
+ :file                "~/src/rst/rst-proto/CMakeLists.txt"
  :system-include-path '()
  :spp-table           '(("RST_EXPORT" . "")))
 

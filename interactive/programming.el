@@ -58,3 +58,10 @@
 (defun rhaschke/elisp-mode-hook ()
   (local-set-key [C-return ] 'complete-symbol))
 (add-hook 'emacs-lisp-mode-hook 'rhaschke/elisp-mode-hook)
+
+;; octave mode
+(defun rhaschke/octave-mode-hook ()
+  (local-set-key [f9] 'octave-send-region))
+(add-hook 'octave-mode-hook 'rhaschke/octave-mode-hook)
+;; auto-associate .m files
+(add-to-list 'auto-mode-alist '("\\.m$" . octave-mode))

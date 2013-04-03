@@ -37,3 +37,12 @@
 (global-set-key [f9]    'compile)
 (global-set-key [f10]   'save-buffers-kill-terminal)
 (global-set-key [f11]   'toggle-fullscreen)
+
+(global-set-key "\C-v"   'x-clipboard-yank)
+
+;; restrict Pos1 / End to visual line 
+;; (setq line-move-visual t) should enable this by default, but it doesnt work
+(global-set-key [home]  'beginning-of-visual-line)
+(global-set-key [end]   'end-of-visual-line)
+
+
