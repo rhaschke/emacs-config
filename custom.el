@@ -10,6 +10,7 @@
  '(ecb-primary-secondary-mouse-buttons (quote mouse-1--C-mouse-1))
  '(mouse-drag-copy-region t)
  '(remote-shell-program "ssh")
+ '(safe-local-variable-values (quote ((ispell-dictionary . "american"))))
  '(semantic-symref-auto-expand-results t)
  '(show-paren-mode t))
 (custom-set-faces
