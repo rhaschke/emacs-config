@@ -65,15 +65,15 @@
  :system-include-path '()
  :spp-table           '(("RST_EXPORT" . "")))
 
-(ede-cpp-root-project
- "rsx"
- :name                "RSX"
- :file                "/vol/rsb/include/sp.h"
- :include-path        '("")
- :system-include-path '()
- :spp-table           '(("RSC_EXPORT" . "") ("RSB_EXPORT" . "") ("RST_EXPORT" . ""))
- :local-variables     `((indent-tabs-mode    . nil)
-                        (c-indentation-style . "rsc")))
+;; (ede-cpp-root-project
+;;  "rsx"
+;;  :name                "RSX"
+;;  :file                "/vol/rsb/include/sp.h"
+;;  :include-path        '("")
+;;  :system-include-path '()
+;;  :spp-table           '(("RSC_EXPORT" . "") ("RSB_EXPORT" . "") ("RST_EXPORT" . ""))
+;;  :local-variables     `((indent-tabs-mode    . nil)
+;;                         (c-indentation-style . "rsc")))
 
 (ede-cpp-root-project
  "rsb-xml"
