@@ -80,7 +80,8 @@
 	t))))
 
 ;; add package dirs to emacs load-path
-(setq load-path (cons "/vol/ni/share/lib/emacs" load-path))
+(push "/vol/ni/share/lib/emacs" load-path)
+(push "/homes/rhaschke/.emacs.d/lib/rosemacs" load-path)
 
 ;; load custom settings
 (setq custom-file (concat config-dir "custom.el"))
