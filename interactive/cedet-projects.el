@@ -30,6 +30,29 @@
 	      :test #'string=)
   (push rsc-style c-style-alist))
 
+(defvar celbrech-style
+  '("celbrech"
+    (c-basic-offset             . 2)
+    (c-comment-only-line-offset . 0)
+	 (indent-tabs-mode           . nil)
+	 (standard-indent            . 2)
+
+    (c-offsets-alist
+     (statement-block-intro . +)
+     (substatement-open     . 0)
+     (substatement-label    . 0)
+     (label                 . 0)
+     (statement-cont        . +)
+
+     (namespace-close       . 0)
+     (namespace-open        . 0)
+     (innamespace           . 2))))
+
+(unless (find "celbrech" c-style-alist
+	      :key  #'car
+	      :test #'string=)
+  (push celbrech-style c-style-alist))
+
 (add-to-list 'auto-mode-alist '("\\.h\\'" . c++-mode))
 
 
