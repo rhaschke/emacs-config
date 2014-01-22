@@ -74,7 +74,7 @@
     (when (file-accessible-directory-p absolute-directory)
       (progn
 	(message "Loading files in directory %s..." absolute-directory)
-	(dolist (file (directory-files absolute-directory t "\\.el$"))
+	(dolist (file (directory-files absolute-directory t "^[^.].*\\.el$"))
 	  (robust-load-elisp (substring file 0 -3)))
 	(message "Loading files in directory %s...done" absolute-directory)
 	t))))
