@@ -8,27 +8,19 @@
 (add-to-list 'semantic-default-submodes 'global-semantic-idle-completions-mode) ; show completions when idle
 (add-to-list 'semantic-default-submodes 'global-semantic-highlight-func-mode) ; highlight current tag
 ;;(add-to-list 'semantic-default-submodes 'global-semantic-idle-summary-mode) ; summarize tag at point
-;;(add-to-list 'semantic-default-submodes 'global-semantic-stickyfunc-mode) ; show current function in header line
+(add-to-list 'semantic-default-submodes 'global-semantic-stickyfunc-mode) ; show current function in header line
 
 ;; Activate semantic
 (semantic-mode 1)
 
-;; load some language support
-(require 'semantic/bovine/c)
-(require 'semantic/bovine/gcc)  ;; set gcc include files
-(require 'semantic/bovine/make)
-(require 'semantic/analyze)
-(require 'semantic/analyze/refs)
-
 ;; add system-wide include paths
-(semantic-add-system-include "/vol/xcf/include" 'c++-mode)
-(semantic-add-system-include "/vol/rsb/include" 'c++-mode)
+;(semantic-add-system-include "/vol/xcf/include" 'c++-mode)
+;(semantic-add-system-include "/vol/rsb/include" 'c++-mode)
 
 ;; display information for tags & classes
-(require 'semantic/ia)
-
-(require 'semantic/decorate/include)
-(require 'semantic/lex-spp)
+;(require 'semantic/ia)
+;(require 'semantic/decorate/include)
+;(require 'semantic/lex-spp)
 
 ;; customisation of modes
 (defun install-common-cedet-keys ()
@@ -66,8 +58,8 @@
 (global-semantic-decoration-mode 1)
 
 ;; EDE
-(global-ede-mode 1)
-(ede-enable-generic-projects)
+;(global-ede-mode 1)
+;(ede-enable-generic-projects)
 
 ;; functions for EDE
 (defun ede-get-local-var (fname var)
@@ -127,20 +119,6 @@
     (when (string-match root-dir current-dir)
       (setf subdir (substring current-dir (match-end 0))))
     (concat "cd " root-dir "Debug/ && make -j3 && cd " root-dir "Release/ && make -j3" )))
-
-;; Projects
-
-;; cpp-tests project definition
-(when (file-exists-p "~/projects/lang-exp/cpp/CMakeLists.txt")
-  (setq cpp-tests-project
-	(ede-cpp-root-project "cpp-tests"
-			      :file "~/projects/lang-exp/cpp/CMakeLists.txt"
-			      :system-include-path '("/home/ott/exp/include"
-						     boost-base-directory)
-			      :local-variables (list
-						(cons 'compile-command 'alexott/gen-cmake-debug-compile-string)
-						)
-			      )))
 
 ;;; emacs-rc-cedet.el ends here
 
