@@ -11,7 +11,7 @@
  '(ecb-primary-secondary-mouse-buttons (quote mouse-1--C-mouse-1))
  '(mouse-drag-copy-region t)
  '(remote-shell-program "ssh")
- '(safe-local-variable-values (quote ((ispell-dictionary . "de_DE") (ispell-dictionary . "american"))))
+ '(safe-local-variable-values (quote ((c-file-offsets (substatement-open . 0)) (eval progn (c-set-offset (quote innamespace) (quote +))) (ispell-dictionary . "british") (ispell-dictionary . "de_DE") (ispell-dictionary . "american"))))
  '(semantic-symref-auto-expand-results t)
  '(show-paren-mode t))
 (custom-set-faces
