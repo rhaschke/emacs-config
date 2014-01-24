@@ -14,7 +14,8 @@
 (semantic-mode 1)
 
 ;; add system-wide include paths
-;(semantic-add-system-include "/vol/xcf/include" 'c++-mode)
+(semantic-add-system-include "/vol/xcf/include" 'c++-mode)
+(semantic-add-system-include "/vol/nirobots/include" 'c++-mode)
 ;(semantic-add-system-include "/vol/rsb/include" 'c++-mode)
 
 ;; display information for tags & classes
