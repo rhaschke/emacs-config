@@ -1,14 +1,19 @@
 (add-hook 'c-mode-common-hook 'hs-minor-mode)
 
-;(load-file "/vol/ni/share/lib/emacs/cedet-1.1/common/cedet.el")
-
-(add-to-list 'semantic-default-submodes 'global-semantic-mru-bookmark-mode) ; allow jumping to previous code blocks
-(add-to-list 'semantic-default-submodes 'global-semanticdb-minor-mode) ; maintain tag database
-(add-to-list 'semantic-default-submodes 'global-semantic-idle-scheduler-mode) ; reparse buffer when idle
-(add-to-list 'semantic-default-submodes 'global-semantic-idle-completions-mode) ; show completions when idle
-(add-to-list 'semantic-default-submodes 'global-semantic-highlight-func-mode) ; highlight current tag
-;;(add-to-list 'semantic-default-submodes 'global-semantic-idle-summary-mode) ; summarize tag at point
-(add-to-list 'semantic-default-submodes 'global-semantic-stickyfunc-mode) ; show current function in header line
+; allow jumping to previously visited code blocks
+(add-to-list 'semantic-default-submodes 'global-semantic-mru-bookmark-mode) 
+; maintain tag database
+(add-to-list 'semantic-default-submodes 'global-semanticdb-minor-mode) 
+; reparse buffer when idle
+(add-to-list 'semantic-default-submodes 'global-semantic-idle-scheduler-mode) 
+; show completions when idle
+(add-to-list 'semantic-default-submodes 'global-semantic-idle-completions-mode) 
+; highlight current tag
+(add-to-list 'semantic-default-submodes 'global-semantic-highlight-func-mode) 
+; summarize tag at point
+;(add-to-list 'semantic-default-submodes 'global-semantic-idle-summary-mode) 
+; show current function in header line
+(add-to-list 'semantic-default-submodes 'global-semantic-stickyfunc-mode) 
 
 ;; Activate semantic
 (semantic-mode 1)
@@ -17,6 +22,13 @@
 (semantic-add-system-include "/vol/xcf/include" 'c++-mode)
 (semantic-add-system-include "/vol/nirobots/include" 'c++-mode)
 ;(semantic-add-system-include "/vol/rsb/include" 'c++-mode)
+
+; Qt4 settings
+(setq qt4-base-dir "/usr/include/qt4/")
+(semantic-add-system-include qt4-base-dir 'c++-mode)
+;(add-to-list 'semantic-lex-c-preprocessor-symbol-file (concat qt4-base-dir "Qt/qconfig.h"))
+;(add-to-list 'semantic-lex-c-preprocessor-symbol-file (concat qt4-base-dir "Qt/qconfig-dist.h"))
+;(add-to-list 'semantic-lex-c-preprocessor-symbol-file (concat qt4-base-dir "Qt/qglobal.h"))
 
 ;; display information for tags & classes
 ;(require 'semantic/ia)
