@@ -64,8 +64,11 @@
   (local-set-key "\C-cq" 'semantic-ia-show-doc)
   (local-set-key "\C-cs" 'semantic-ia-show-summary)
   (local-set-key "\C-cp" 'semantic-analyze-proto-impl-toggle)
-  (local-set-key (kbd "C-c <left>") 'semantic-tag-folding-fold-block)
-  (local-set-key (kbd "C-c <right>") 'semantic-tag-folding-show-block))
+;  (local-set-key (kbd "C-c <left>") 'semantic-tag-folding-fold-block)
+;  (local-set-key (kbd "C-c <right>") 'semantic-tag-folding-show-block)
+  (local-set-key (kbd "C-c <left>") 'hs-hide-block)
+  (local-set-key (kbd "C-c <right>") 'hs-show-block)
+)
 
 ;; load cedet key map
 (add-hook 'c-mode-common-hook 'install-common-cedet-keys)
