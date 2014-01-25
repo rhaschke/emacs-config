@@ -18,9 +18,21 @@
 ;; Activate semantic
 (semantic-mode 1)
 
+; allow gnu global database as backend for semanticdb
+(semanticdb-enable-gnu-global-databases 'c++-mode)
+
+; auto-complete mode
+; http://cx4a.org/software/auto-complete/manual.html
+(require 'auto-complete-config)
+(ac-config-default)
+
+; allow folding of tags/functions
+; (require 'semantic-tag-folding) ; doesnt work
+
 ;; add system-wide include paths
 (semantic-add-system-include "/vol/xcf/include" 'c++-mode)
 (semantic-add-system-include "/vol/nirobots/include" 'c++-mode)
+(semantic-add-system-include "/vol/nivision/include/icl-8.4" 'c++-mode)
 ;(semantic-add-system-include "/vol/rsb/include" 'c++-mode)
 
 ; Qt4 settings
@@ -35,12 +47,17 @@
 ;(require 'semantic/decorate/include)
 ;(require 'semantic/lex-spp)
 
+; cedet hook for c-mode: define auto-complete sources
+(defun my-c-mode-cedet-hook ()
+  ; add global/gtags, semantic as source for auto-completion
+  (add-to-list 'ac-sources 'ac-source-gtags)
+  (add-to-list 'ac-sources 'ac-source-semantic))
+(add-hook 'c-mode-common-hook 'my-c-mode-cedet-hook)
+
 ;; customisation of modes
 (defun install-common-cedet-keys ()
-  (local-set-key [C-return] 'semantic-ia-complete-symbol)
-  ;;
   (local-set-key "\C-c>" 'semantic-complete-analyze-inline)
-  (local-set-key "\C-c=" 'semantic-decoration-include-visit)
+  (local-set-key "\C-co" 'semantic-decoration-include-visit)
 
   (local-set-key "\C-cj" 'semantic-ia-fast-jump)
   (local-set-key "\C-cb" 'semantic-mrub-switch-tags)
@@ -74,64 +91,5 @@
 ;(global-ede-mode 1)
 ;(ede-enable-generic-projects)
 
-;; functions for EDE
-(defun ede-get-local-var (fname var)
-  "fetch given variable var from :local-variables of project of file fname"
-  (let* ((current-dir (file-name-directory fname))
-         (prj (ede-current-project current-dir)))
-    (when prj
-      (let* ((ov (oref prj local-variables))
-            (lst (assoc var ov)))
-        (when lst
-          (cdr lst))))))
-
-(defun rhaschke/compile ()
-  "Saves all unsaved buffers, and runs 'compile'."
-  (interactive)
-  (save-some-buffers t)
-  (let* ((r (ede-get-local-var
-             (or (buffer-file-name (current-buffer)) default-directory)
-             'compile-command))
-         (cmd (if (functionp r) (funcall r) r)))
-	 (message "var: %s" r)
-    (set (make-local-variable 'compile-command) (or cmd compile-command))
-    (compile compile-command)))
-
-(global-set-key [f9] 'rhaschke/compile)
-
-;;
-(defun rhaschke/gen-std-compile-string ()
-  "Generates compile string for compiling CMake project in debug mode"
-  (let* ((current-dir (file-name-directory
-                       (or (buffer-file-name (current-buffer)) default-directory)))
-         (prj (ede-current-project current-dir))
-         (root-dir (ede-project-root-directory prj)))
-    (concat "cd " root-dir "; make -j2")))
-
-;;
-(defun rhaschke/gen-cmake-debug-compile-string ()
-  "Generates compile string for compiling CMake project in debug mode"
-  (let* ((current-dir (file-name-directory
-                       (or (buffer-file-name (current-buffer)) default-directory)))
-         (prj (ede-current-project current-dir))
-         (root-dir (ede-project-root-directory prj))
-         (subdir "")
-         )
-    (when (string-match root-dir current-dir)
-      (setf subdir (substring current-dir (match-end 0))))
-    (concat "cd " root-dir "Debug/" "; make -j3")))
-
-(defun rhaschke/gen-cmake-debug/release-compile-string ()
-  "Generates compile string for compiling CMake project in debug & release modes"
-  (let* ((current-dir (file-name-directory
-                       (or (buffer-file-name (current-buffer)) default-directory)))
-         (prj (ede-current-project "~/src/rsb/cpp/core/src/rsb/"))
-         (root-dir (ede-project-root-directory prj))
-         (subdir "")
-         )
-    (when (string-match root-dir current-dir)
-      (setf subdir (substring current-dir (match-end 0))))
-    (concat "cd " root-dir "Debug/ && make -j3 && cd " root-dir "Release/ && make -j3" )))
-
-;;; emacs-rc-cedet.el ends here
+;;; cedet.el ends here
 
