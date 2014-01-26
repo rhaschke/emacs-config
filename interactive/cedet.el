@@ -6,8 +6,8 @@
 (add-to-list 'semantic-default-submodes 'global-semanticdb-minor-mode) 
 ; reparse buffer when idle
 (add-to-list 'semantic-default-submodes 'global-semantic-idle-scheduler-mode) 
-; show completions when idle
-(add-to-list 'semantic-default-submodes 'global-semantic-idle-completions-mode) 
+; show completions when idle: disabled, because we use auto-complete package
+;(add-to-list 'semantic-default-submodes 'global-semantic-idle-completions-mode) 
 ; highlight current tag
 (add-to-list 'semantic-default-submodes 'global-semantic-highlight-func-mode) 
 ; summarize tag at point
@@ -69,6 +69,8 @@
   (local-set-key "\C-cq" 'semantic-ia-show-doc)
   (local-set-key "\C-cs" 'semantic-ia-show-summary)
   (local-set-key "\C-cp" 'semantic-analyze-proto-impl-toggle)
+  (local-set-key "\C-c\C-r" 'semantic-symref-symbol)
+
   (local-set-key (kbd "C-c <left>") 'hs-hide-block)
   (local-set-key (kbd "C-c <right>") 'hs-show-block)
 )
@@ -89,17 +91,12 @@
 (defun install-c-mode-cedet-keys ()
   ; allow auto-completion of . or -> using semantic-source only
   (local-set-key "." 'ac-complete-self-insert)
-  (local-set-key ">" 'ac-complete-self-insert)
-  (local-set-key "\C-c\C-r" 'semantic-symref))
+  (local-set-key ">" 'ac-complete-self-insert))
 
 (add-hook 'c-mode-common-hook 'install-c-mode-cedet-keys)
 
 ;; have nice decorations by default
 (global-semantic-decoration-mode 1)
-
-;; EDE
-;(global-ede-mode 1)
-;(ede-enable-generic-projects)
 
 ;;; cedet.el ends here
 
