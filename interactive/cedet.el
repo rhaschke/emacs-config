@@ -18,16 +18,26 @@
 ;; Activate semantic
 (semantic-mode 1)
 
-; allow gnu global database as backend for semanticdb
+;; submodules of semantic
+(require 'semantic/bovine/c) ; support c/c++ parsing
+(require 'semantic/ia)       ; interactive functions for semantic analyzer
+(require 'semantic/decorate/include) ; decoration modes for include statements
+(require 'semantic/db-ebrowse) ; ebrowse backend for semanticdb
+
+; allow gnu global as backend for semanticdb
 (semanticdb-enable-gnu-global-databases 'c++-mode)
 
 ; auto-complete mode
 ; http://cx4a.org/software/auto-complete/manual.html
 (require 'auto-complete-config)
+(add-to-list 'ac-dictionary-directories "~/.emacs.d/ac-dict")
 (ac-config-default)
+(setq ac-auto-start 3) ; auto-start completion with this number of chars
+(setq ac-auto-show-menu 0.8) ; delay [s] for showing completion menu
 
-; allow folding of tags/functions
-; (require 'semantic-tag-folding) ; doesnt work
+; potentially intersting other packages: 
+; (require 'semantic-tag-folding) ; allow folding of tags/functions
+; (require 'eassist) ; http://www.emacswiki.org/emacs/EAssist
 
 ;; add system-wide include paths
 (semantic-add-system-include "/vol/xcf/include" 'c++-mode)
@@ -38,20 +48,15 @@
 ; Qt4 settings
 (setq qt4-base-dir "/usr/include/qt4/")
 (semantic-add-system-include qt4-base-dir 'c++-mode)
-;(add-to-list 'semantic-lex-c-preprocessor-symbol-file (concat qt4-base-dir "Qt/qconfig.h"))
-;(add-to-list 'semantic-lex-c-preprocessor-symbol-file (concat qt4-base-dir "Qt/qconfig-dist.h"))
-;(add-to-list 'semantic-lex-c-preprocessor-symbol-file (concat qt4-base-dir "Qt/qglobal.h"))
-
-;; display information for tags & classes
-;(require 'semantic/ia)
-;(require 'semantic/decorate/include)
-;(require 'semantic/lex-spp)
+(add-to-list 'semantic-lex-c-preprocessor-symbol-file (concat qt4-base-dir "Qt/qconfig.h"))
+(add-to-list 'semantic-lex-c-preprocessor-symbol-file (concat qt4-base-dir "Qt/qconfig-dist.h"))
+(add-to-list 'semantic-lex-c-preprocessor-symbol-file (concat qt4-base-dir "Qt/qglobal.h"))
 
 ; cedet hook for c-mode: define auto-complete sources
 (defun my-c-mode-cedet-hook ()
   ; add global/gtags, semantic as source for auto-completion
-  (add-to-list 'ac-sources 'ac-source-gtags)
   (add-to-list 'ac-sources 'ac-source-semantic))
+  (add-to-list 'ac-sources 'ac-source-gtags)
 (add-hook 'c-mode-common-hook 'my-c-mode-cedet-hook)
 
 ;; customisation of modes
@@ -64,8 +69,6 @@
   (local-set-key "\C-cq" 'semantic-ia-show-doc)
   (local-set-key "\C-cs" 'semantic-ia-show-summary)
   (local-set-key "\C-cp" 'semantic-analyze-proto-impl-toggle)
-;  (local-set-key (kbd "C-c <left>") 'semantic-tag-folding-fold-block)
-;  (local-set-key (kbd "C-c <right>") 'semantic-tag-folding-show-block)
   (local-set-key (kbd "C-c <left>") 'hs-hide-block)
   (local-set-key (kbd "C-c <right>") 'hs-show-block)
 )
@@ -76,13 +79,17 @@
 (add-hook 'scheme-mode-hook 'install-common-cedet-keys)
 (add-hook 'emacs-lisp-mode-hook 'install-common-cedet-keys)
 
+(defun ac-complete-self-insert (arg)
+  "inserts arg and the starts ac autocompletion using semantic source"
+  (interactive "p")
+  (self-insert-command arg) ; insert the key
+  (ac-complete-semantic) ; start auto-completion
+)
+
 (defun install-c-mode-cedet-keys ()
-  ; allow auto-completion for variable. or variable->
-  (local-set-key "." 'semantic-complete-self-insert)
-  (local-set-key ">" 'semantic-complete-self-insert)
-  (local-set-key "\C-ct" 'eassist-switch-h-cpp)
-  (local-set-key "\C-xt" 'eassist-switch-h-cpp)
-  (local-set-key "\C-ce" 'eassist-list-methods)
+  ; allow auto-completion of . or -> using semantic-source only
+  (local-set-key "." 'ac-complete-self-insert)
+  (local-set-key ">" 'ac-complete-self-insert)
   (local-set-key "\C-c\C-r" 'semantic-symref))
 
 (add-hook 'c-mode-common-hook 'install-c-mode-cedet-keys)
