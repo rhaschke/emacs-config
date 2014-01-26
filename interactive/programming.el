@@ -69,11 +69,6 @@
   (require 'org-exp-bibtex))
 (add-hook 'org-mode-hook 'rhaschke/org-mode-hook)
 
-;; elisp mode hook
-(defun rhaschke/elisp-mode-hook ()
-  (local-set-key [C-return ] 'complete-symbol))
-(add-hook 'emacs-lisp-mode-hook 'rhaschke/elisp-mode-hook)
-
 ;; octave mode
 (defun rhaschke/octave-mode-hook ()
   (local-set-key [f9] 'octave-send-region))

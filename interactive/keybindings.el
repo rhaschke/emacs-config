@@ -23,9 +23,6 @@
 (global-set-key "^"   'match-paren)
 (global-set-key [C-^] '(insert "^"))
 
-;; auto-completion
-(global-set-key [C-return] #'complete-symbol)
-
 (global-set-key [f1]    'help-for-help)
 (global-set-key [M-f1]  'info)
 
