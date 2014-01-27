@@ -86,7 +86,7 @@
 ;; load custom settings
 (setq custom-file (concat config-dir "custom.el"))
 
-
+
 ;;; First we load version-specific stuff, packages and some other stuff.
 ;; + emacs${version} version specific stuff
 ;; + packages        add additional package directories to load path and
@@ -101,7 +101,7 @@
 
 (load-user-elisp-directory config-common-dir)
 
-
+
 ;;; Now packages and everything should be in place. So we can load
 ;; customizations.
 ;;
@@ -109,7 +109,7 @@
 (robust-load-elisp custom-file)
 
 
-
+
 ;;; We load (non)interactive startup files after customizations are in
 ;; place.
 ;;
