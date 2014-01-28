@@ -99,7 +99,7 @@
 
 (defun install-c-mode-cedet-keys ()
   ; allow auto-completion of . or -> using semantic-source only
-  (if (boundp 'ac-complete-semantic)
+  (if (fboundp 'ac-complete-semantic)
 	 (progn 
 		(local-set-key "." 'ac-complete-self-insert)
 		(local-set-key ">" 'ac-complete-self-insert))

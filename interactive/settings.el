@@ -3,3 +3,6 @@
 	 (setq browse-url-browser-function 'browse-url-generic
 			 browse-url-generic-program "x-www-browser")
   (setq browse-url-browser-function 'browse-url-w3))
+
+;; turn off abbrev-mode
+(abbrev-mode 0)
