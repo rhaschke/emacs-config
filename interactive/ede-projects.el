@@ -11,13 +11,13 @@
  :spp-table           '()
  :local-variables     '((indent-tabs-mode    . t)
                         (c-indentation-style . "linux")
-								(compile-command . "make -C ~/mynst all")))
+								(compile-command . "make -j4 -C ~/mynst all")))
 
 (ede-cpp-root-project
  "nst"
  :name                "nst"
  :file                "~/nst7/Makefile"
- :include-path        '()
+ :include-path        '("nstsrc" "neosrc" "foldersrc")
  :system-include-path '()
  :spp-table           '()
  :local-variables     '((indent-tabs-mode    . t)
@@ -36,3 +36,11 @@
 								(compile-command . "make -j4 -C ~/src/sfbVision")
 								(eval . (progn (c-set-offset 'innamespace  '+)))))
 
+(ede-cpp-root-project
+ "cbf"
+ :name                "cbf"
+ :file                "~/src/cbf/CMakeLists.txt"
+ :include-path        '("libcbf")
+ :system-include-path '()
+ :spp-table           '()
+ :local-variables     '((compile-command . "make -j4 -C ~/src/cbf/build")))

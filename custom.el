@@ -9,14 +9,13 @@
  '(ecb-layout-name "left3")
  '(ecb-options-version "2.40")
  '(ecb-primary-secondary-mouse-buttons (quote mouse-1--C-mouse-1))
+ '(ecb-tip-of-the-day nil)
  '(mouse-drag-copy-region t)
- '(remote-shell-program "ssh")
- '(safe-local-variable-values (quote ((eval progn (c-set-offset (quote innamespace) (quote +))) (ispell-dictionary . "de_DE") (ispell-dictionary . "american"))))
- '(semantic-symref-auto-expand-results t)
+ '(safe-local-variable-values (quote ((c-file-offsets (substatement-open . 0)) (eval progn (c-set-offset (quote innamespace) (quote +))) (ispell-dictionary . "de_DE") (ispell-dictionary . "american"))))
  '(show-paren-mode t))
 (custom-set-faces
   ;; custom-set-faces was added by Custom.
   ;; If you edit it by hand, you could mess it up, so be careful.
   ;; Your init file should contain only one such instance.
   ;; If there is more than one, they won't work right.
- '(semantic-tag-boundary-face ((default nil) (nil nil))))
+ )
