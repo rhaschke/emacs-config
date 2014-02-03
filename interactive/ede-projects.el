@@ -42,5 +42,7 @@
  :file                "~/src/cbf/CMakeLists.txt"
  :include-path        '("libcbf")
  :system-include-path '()
- :spp-table           '()
- :local-variables     '((compile-command . "make -j4 -C ~/src/cbf/build")))
+ :spp-table           '(("CBF_HAVE_XSD".1))
+ ;; backquote ` allows to selectively evaluate parts of a quoted list (marked with ,)
+ :spp-files           `(,(concat "o." (getenv "ARCH") "/libcbf/cbf/config.h"))
+ :local-variables     '((compile-command . (concat "make -j4 -C ~/src/cbf/o." (getenv "ARCH")))))
