@@ -22,7 +22,7 @@
 (add-to-list 'auto-mode-alist '("\\.rnc$" . rnc-mode))
 (require 'rnc-mode)
 (require 'nxml-speedbar)
-(add-to-list 'speedbar-supported-extension-expressions ".xml\\|.hsm")
+(speedbar-add-supported-extension ".xml\\|.hsm")
 (require 'nxml-script)
 (require 'nxml-where)
 (nxml-where-global-mode 1)
@@ -50,8 +50,14 @@
 					"<!--"                        ;; regexp for comment start.
                nxml-forward-element
                nil))
+
+; regular expression to generate outline in hsm mode
+(setq-mode-local nxml-mode 
+	nxml-section-element-name-regexp "STATE\\|REGION\\|EVENT\\|ONEVENT")
+
 (defun rhaschke/nxml-mode-hook ()
   (hs-minor-mode)
+  (auto-complete-mode)
   (add-to-list 'rng-schema-locating-files "/vol/nirobots/share/schemas.xml")
   (rng-auto-set-schema))
 (add-hook 'nxml-mode-hook 'rhaschke/nxml-mode-hook)
