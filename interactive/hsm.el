@@ -38,17 +38,18 @@
 ;; jump to buffer for python errors
 (defun hsm-pythonError (errors file row col &rest ignored)
   "callback method for dbus messages from hsm (for python errors)"
+  (message "HSM python error in %s:%d" file row)
+;  (display-hsm-errors errors)
   (when (and file (file-exists-p file))
 	 (let* ((buf (find-buffer-visiting file)))
 		(if buf (switch-to-buffer buf) (find-file file))
 		(when (> row 0) (goto-line row))
 		(when (> col 0) (move-to-column col))
-		(display-hsm-errors errors)
 ;		(raise-frame (window-frame (selected-window)))
 )))
 
 (require 'dbus)
-(when (and nil (eq window-system 'x) (fboundp 'dbus-register-signal))
+(when (and (eq window-system 'x) (fboundp 'dbus-register-signal))
   (condition-case nil 
 		(dbus-register-signal
 		 :session nil "/de/unibi/agni/hsm"
