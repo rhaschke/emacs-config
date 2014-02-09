@@ -1,5 +1,7 @@
 (add-hook 'c-mode-common-hook 'hs-minor-mode)
 
+(require 'ecb)
+
 ; auto-complete mode
 ; http://cx4a.org/software/auto-complete/manual.html
 (if (require 'auto-complete-config nil 'noerror)
