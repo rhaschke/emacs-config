@@ -14,18 +14,14 @@
 (add-to-list 'auto-mode-alist '("/drupal.*\\.info" . conf-windows-mode))
 
 
-;; XML mode
-; replace xml-mode with nxml-mode
-(fset 'xml-mode 'nxml-mode)
-(add-to-list 'auto-mode-alist '("\\.me$" . nxml-mode))
-(add-to-list 'auto-mode-alist '("\\.hsm$" . nxml-mode))
-(add-to-list 'auto-mode-alist '("\\.rnc$" . rnc-mode))
+;; nxml-mode
+(add-to-list 'auto-mode-alist '("\\.me$"  . nxml-mode))
+
 (require 'rnc-mode)
-(require 'nxml-speedbar)
-(speedbar-add-supported-extension ".xml\\|.hsm")
-(require 'nxml-script)
-(require 'nxml-where)
-(nxml-where-global-mode 1)
+(add-to-list 'auto-mode-alist '("\\.rnc$" . rnc-mode))
+
+(require 'rng-loc)
+(add-to-list 'rng-schema-locating-files "/vol/nirobots/share/schemas.xml")
 
 (defun bf-pretty-print-xml-region (begin end)
   "Pretty format XML markup in region. You need to have nxml-mode
@@ -39,8 +35,7 @@
       (goto-char begin)
       (while (search-forward-regexp "\>[ \\t]*\<" nil t) 
         (backward-char) (insert "\n"))
-      (indent-region begin end))
-    (message "Ah, much better!"))
+      (indent-region begin end)))
 
 ; hide-show for nxml mode
 (add-to-list 'hs-special-modes-alist
@@ -51,15 +46,10 @@
                nxml-forward-element
                nil))
 
-; regular expression to generate outline in hsm mode
-(setq-mode-local nxml-mode 
-	nxml-section-element-name-regexp "STATE\\|REGION\\|EVENT\\|ONEVENT")
-
+; enable auto-completion in nxml
+(add-to-list 'ac-modes 'nxml-mode)
 (defun rhaschke/nxml-mode-hook ()
-  (hs-minor-mode)
-  (auto-complete-mode)
-  (add-to-list 'rng-schema-locating-files "/vol/nirobots/share/schemas.xml")
-  (rng-auto-set-schema))
+  (hs-minor-mode))
 (add-hook 'nxml-mode-hook 'rhaschke/nxml-mode-hook)
 
 ;; google protocol buffer mode

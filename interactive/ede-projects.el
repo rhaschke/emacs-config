@@ -37,6 +37,16 @@
 								(eval . (progn (c-set-offset 'innamespace  '+)))))
 
 (ede-cpp-root-project
+ "hsm"
+ :name                "hsm"
+ :file                "~/src/hsm/configure.ac"
+ :include-path        '("src")
+ :system-include-path '()
+ :spp-table           '(("HAVE_DBUS".1))
+ ;; backquote ` allows to selectively evaluate parts of a quoted list (marked with ,)
+ :local-variables     '((compile-command . (concat "make -j4 -C ~/src/hsm/o." (getenv "ARCH")))))
+
+(ede-cpp-root-project
  "cbf"
  :name                "cbf"
  :file                "~/src/cbf/CMakeLists.txt"
