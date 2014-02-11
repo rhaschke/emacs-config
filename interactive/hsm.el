@@ -41,8 +41,13 @@
   (message "HSM python error in %s:%d" file row)
 ;  (display-hsm-errors errors)
   (when (and file (file-exists-p file))
-	 (let* ((buf (find-buffer-visiting file)))
-		(if buf (switch-to-buffer buf) (find-file file))
+	 (let ((buf (find-buffer-visiting file)))
+		(if buf 
+		  (let ((w (get-buffer-window buf)))
+			 (if w 
+				(select-window w) ; make window w active
+				(switch-to-buffer buf))) ; show buf in currently active window
+		  (find-file file))
 		(when (> row 0) (goto-line row))
 		(when (> col 0) (move-to-column col))
 ;		(raise-frame (window-frame (selected-window)))

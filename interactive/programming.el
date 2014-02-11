@@ -1,3 +1,8 @@
+;; emacs-lisp
+(defun rhaschke/elisp-mode-hook ()
+  (eldoc-mode 1))
+(add-hook 'emacs-lisp-mode-hook 'rhaschke/elisp-mode-hook)
+
 ;;; Drupal mode
 (defun drupal-mode ()
   (require 'php-mode)
