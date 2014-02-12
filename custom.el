@@ -10,7 +10,6 @@
  '(ecb-options-version "2.40")
  '(ecb-primary-secondary-mouse-buttons (quote mouse-1--C-mouse-1))
  '(ecb-tip-of-the-day nil)
- '(ecb-windows-width 0.25)
  '(grep-find-command "find . -type f -not -path \"*/.svn*\" -print0 | \"xargs\" -0 -e grep -nH -e ")
  '(mouse-drag-copy-region t)
  '(pop-up-windows nil)

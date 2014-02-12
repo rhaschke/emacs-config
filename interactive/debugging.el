@@ -1,1 +1,1 @@
-(setq gdb-many-windows t)
+; (setq gdb-many-windows nil)
