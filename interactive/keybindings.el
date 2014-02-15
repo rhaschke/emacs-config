@@ -30,6 +30,11 @@
 (global-set-key [f3]    'find-file)
 (global-set-key [f4]    'kill-this-buffer)
 
+(global-set-key [f5]    'hs-toggle-hiding)
+(global-set-key [f6]    'hs-hide-level)
+(global-set-key  (kbd "C-c <left>") 'hs-hide-block)
+(global-set-key  (kbd "C-c <right>") 'hs-show-block)
+
 (global-set-key [f8]    'next-error)
 (global-set-key [f9]    'compile)
 (global-set-key [f10]   'save-buffers-kill-terminal)
@@ -37,8 +42,6 @@
 
 (global-set-key "\C-v"   'x-clipboard-yank)
 
-;; restrict Pos1 / End to visual line 
-;; (setq line-move-visual t) should enable this by default, but it doesnt work
 (global-set-key [home]  'beginning-of-visual-line)
 (global-set-key [end]   'end-of-visual-line)
 

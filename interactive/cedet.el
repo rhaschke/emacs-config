@@ -81,9 +81,6 @@
   (local-set-key "\C-cs" 'semantic-ia-show-summary)
   (local-set-key "\C-cp" 'semantic-analyze-proto-impl-toggle)
   (local-set-key "\C-c\C-r" 'semantic-symref-symbol)
-
-  (local-set-key (kbd "C-c <left>") 'hs-hide-block)
-  (local-set-key (kbd "C-c <right>") 'hs-show-block)
 )
 
 ;; load cedet key map
