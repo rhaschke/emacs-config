@@ -28,7 +28,9 @@
 ; summarize tag at point
 ;(add-to-list 'semantic-default-submodes 'global-semantic-idle-summary-mode) 
 ; show current function in header line
-(add-to-list 'semantic-default-submodes 'global-semantic-stickyfunc-mode) 
+;(add-to-list 'semantic-default-submodes 'global-semantic-stickyfunc-mode) 
+; show breadcrumbs
+(global-semantic-idle-breadcrumbs-mode 1)
 
 ;; Activate semantic
 (semantic-mode 1)
