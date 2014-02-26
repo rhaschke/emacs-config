@@ -68,8 +68,13 @@ to successive attribute names and values of the current tag (via
 									 (when (string= name "href")
 										(cl-return value))))
 
-(defun semantic-nxml-parse-raw (start end &rest ignore)
-  "Parse nxml buffer into raw tag structure"
+(defun semantic-nxml-parse-region (start end &rest ignore)
+  "Parse the current nxml buffer for semantic tags.
+Each tag returned is of the form:
+ (\"NAME\" include|element (:attributes ATTRIBUTES :children CHILDREN))
+
+It is an override of 'parse-region and must be installed by the
+function `semantic-install-function-overrides'."
   (save-excursion
     (goto-char start)
     (xmltok-forward-prolog)
@@ -123,24 +128,6 @@ to successive attribute names and values of the current tag (via
 				(when (not stack)
 				  (push tag result)))))
 		(nreverse result))))
-
-(defun semantic-nxml-expand-tag (tag)
-  "Recursively expand the raw tag."
-  (let ((attributes (semantic-tag-get-attribute tag :attributes))
-		  (children (semantic-tag-get-attribute tag :children)))
-    (when attributes (mapcar 'semantic-nxml-expand-tag attributes))
-    (when children (mapcar 'semantic-nxml-expand-tag children))
-    (car (semantic--tag-expand tag))))
-
-(defun semantic-nxml-parse-region (start end &rest ignore)
-  "Parse the current nxml buffer for semantic tags.
-Each tag returned is of the form:
- (\"NAME\" include|element (:attributes ATTRIBUTES :children CHILDREN))
-
-It is an override of 'parse-region and must be installed by the
-function `semantic-install-function-overrides'."
-  (mapcar 'semantic-nxml-expand-tag
-          (semantic-nxml-parse-raw start end)))
 
 (defun semantic-nxml-parse-changes ()
   "Parse changes in the current nxml buffer."
