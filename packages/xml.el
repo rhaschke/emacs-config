@@ -31,7 +31,6 @@
 ;;
 
 (require 'cl)
-;; (require 'cl-lib)
 (defalias 'cl-gensym 'gensym)
 (defalias 'cl-dolist 'dolist)
 (defalias 'cl-return 'return)
@@ -39,7 +38,6 @@
 
 (require 'semantic/tag)
 (require 'semantic/format)
-
 (require 'nxml-mode)
 
 
@@ -54,112 +52,78 @@
 to successive attribute names and values of the current tag (via
 `xmltok-attributes') and execute BODY for each binding."
   (let ((name   (first name-value))
-	(value  (second name-value))
-	(start  (or (third name-value) (cl-gensym)))
-	(end    (or (fourth name-value) (cl-gensym)))
-	(attrib (cl-gensym)))
+		  (value  (second name-value))
+		  (start  (or (third name-value) (cl-gensym)))
+		  (end    (or (fourth name-value) (cl-gensym)))
+		  (attrib (cl-gensym)))
     `(dolist (,attrib xmltok-attributes)
        (let ((,name  (xmltok-attribute-local-name ,attrib))
-	     (,value (xmltok-attribute-value ,attrib))
-	     (,start (xmltok-attribute-name-start ,attrib))
-	     (,end   (xmltok-attribute-value-end ,attrib)))
-	 ,@body))))
+				 (,value (xmltok-attribute-value ,attrib))
+				 (,start (xmltok-attribute-name-start ,attrib))
+				 (,end   (xmltok-attribute-value-end ,attrib)))
+			,@body))))
 
 (defun semantic-xml--find-href ()
- (semantic-xml--doattribs (name value start end)
-   (when (string= name "href")
-     (cl-return value))))
+  (semantic-xml--doattribs (name value)
+									(when (string= name "href")
+									  (cl-return value))))
 
-(define-mode-local-override
-  semantic-parse-region nxml-mode
+(defun semantic-nxml-parse-region 
   (start end &optional nonterminal depth returnonerror)
   "Bla"
   (save-excursion
     (goto-char start)
     (xmltok-forward-prolog)
-    (let (stack
-	  (children '(nil))
-	  result)
-     (while (and (xmltok-forward) (< (point) end))
-       (case xmltok-type
-	 (start-tag
-	  (let ((name       (xmltok-start-tag-local-name))
-		(start      xmltok-start)
-		(attributes))
-	    (cond
-	     ;; XI include tag
-	     ((and (string= name "include")
-		   (semantic-xml--find-href))
-	      (let* ((href (semantic-xml--find-href))
-		     (tag  (semantic-tag-new-include href nil)))
-		(push tag (first children))
-		(push tag stack)))
-	     ;; "Normal" tag
-	     (t
-	      (semantic-xml--doattribs (name value start end)
-	        (let ((tag (semantic-tag-new-variable
-			    name "attribute" value)))
-		  (semantic-tag-set-bounds tag start end)
-		  (push tag attributes)))
+    (let (stack 
+			 (children '(nil)) 
+			 result)
+		(while (and (xmltok-forward) (< (point) end))
+		  ;; start-tag or empty element: push onto stack
+		  (when (or (eq xmltok-type 'start-tag)
+						(eq xmltok-type 'empty-element))
+			 (let ((name   (xmltok-start-tag-local-name))
+					 (start  xmltok-start)
+					 (attributes))
+				(message "-> element: %s, stack: %d" name (length stack))
+				;; parse the attributes
+				(semantic-xml--doattribs (name value start end)
+												 (let ((tag (semantic-tag name 'attribute :value value)))
+													(semantic-tag-set-bounds tag start end)
+													(push tag attributes)))
 
-	      (let ((tag (semantic-tag-new-type
-			  name "element" (reverse attributes) (cons nil nil))))
-		(semantic-tag-set-bounds tag start (1+ start))
-		(push tag (first children))
-		(push '() children)
+				;; create new element tag with given attributes
+				(let ((tag (semantic-tag name 'element :attributes (reverse attributes))))
+				  (when (and (string= (semantic-tag-name tag) "include")
+								 (semantic-xml--find-href))
+					 (let ((href (semantic-xml--find-href)))
+						;; replace tag by include-type tag
+						(setq tag (semantic-tag-new-include href nil)))
+					 ;; push includes always as elements into results
+					 (push tag result))
 
-		(push tag stack))))))
+				  (semantic-tag-set-bounds tag start (1+ start))
+				  ;; push this tag into current list of children (first)
+				  (push tag (first children))
+				  ;; push an empty list to front in order to accumulate children of this element
+				  (push '() children)
+				  ;; push tag onto stack
+				  (push tag stack))))
 
-	 (end-tag
-	  (let* ((tag  (pop stack))
-		 (start (semantic-tag-start tag))
-		 (children1 (pop children)))
-	    (cond
-	     ;; XI include tag
-	     ((semantic-tag-of-class-p tag 'include)
-	      (semantic-tag-set-bounds tag start (point))
-	      (push tag result))
-	     ;; Normal tag
-	     (t
-	      (setq tag (semantic-tag-new-type
-			 (semantic-tag-name tag)
-			 "element"
-			 (append (semantic-tag-type-members tag) children1)
-			 (cons nil nil)))
-	      (semantic-tag-set-bounds tag start (point))
-	      (if (= 1 (length children))
-		  (push tag result)
-		(progn
-		  (pop (first children))
-		  (push tag (first children))))))))
+		  ;; end-tag or empty element: pop from stack
+		  (when (or (eq xmltok-type 'end-tag)
+						(eq xmltok-type 'empty-element))
+			 (let* ((tag   (pop stack))
+					  (start (semantic-tag-start tag))
+					  (mychildren (pop children)))
+				(message "<- element: %s, stack: %d" (semantic-tag-name tag) (length stack))
+				
+				(when mychildren
+				  (semantic-tag-put-attribute tag :children (nreverse mychildren)))
+				(semantic-tag-set-bounds tag start (point))
 
-	 (empty-element
-	  (let* ((name       (xmltok-start-tag-local-name))
-		 (start      xmltok-start)
-		 (attributes))
-	    (cond
-	     ;; XI include tag
-	     ((and (string= name "include")
-		   (semantic-xml--find-href))
-	      (let* ((href (semantic-xml--find-href))
-		     (tag  (semantic-tag-new-include href nil)))
-		(semantic-tag-set-bounds tag start (point))
-		(push tag result)))
-	     ;; Normal tag
-	     (t
-	      (semantic-xml--doattribs (name value start end)
-	        (let ((tag (semantic-tag-new-variable
-			    name "attribute" value)))
-		  (semantic-tag-set-bounds tag start end)
-		  (push tag attributes)))
-
-	      (let ((tag (semantic-tag-new-type
-			  name "element" (reverse attributes)
-			  (cons nil nil))))
-		(semantic-tag-set-bounds tag start (point))
-		(push tag (first children)))))))))
-
-     (nreverse result))))
+				(when (not stack)
+					 (push tag result)))))
+		(nreverse result))))
 
 
 ;;;
@@ -170,42 +134,42 @@ to successive attribute names and values of the current tag (via
   "Return an abbreviated string describing TAG."
   ;; Do lots of complex stuff here.
   (let* ((class  (semantic-tag-class tag))
-	 (name   (semantic-format-tag-canonical-name
-		  tag parent color))
-	 (prefix (case class
-		   (variable "@")
-		   (type     "<")
-		   (include  "<include ")
-		   (t        "")))
-	 (suffix (case class
-		   (variable "")
-		   (type     ">")
-		   (include  ">")
-		   (t        ""))))
+			(name   (semantic-format-tag-canonical-name
+						tag parent color))
+			(prefix (case class
+						 (attribute "@")
+						 (element   "<")
+						 (include  "<include ")
+						 (t        "")))
+			(suffix (case class
+						 (attribute "")
+						 (element   ">")
+						 (include   ">")
+						 (t         ""))))
     (concat prefix
-	    name
-	    (when (eq class 'type)
-	      (let (members)
-		(mapc (lambda (child)
-			(push
-			 (concat
-			  (semantic-format-tag-name child nil color)
-			  "="
-			  (propertize
-			   (concat
-			    "\""
-			    (semantic-tag-variable-default child)
-			    "\"")
-			   'face 'font-lock-string-face))
-			 members))
-		      (semantic-find-tags-by-name-regexp
-		       "\\(:?name\\|id\\)$"
-		       (semantic-find-tags-by-type
-			"attribute"
-			(semantic-tag-type-members tag))))
-		(when members
-		  (apply #'concat " " (reverse members)))))
-	    suffix)))
+				name
+				(when (eq class 'element)
+				  (let (members)
+					 (mapc (lambda (child)
+								(push
+								 (concat
+								  (semantic-format-tag-name child nil color)
+								  "="
+								  (propertize
+									(concat
+									 "\""
+									 (semantic-tag-variable-default child)
+									 "\"")
+									'face 'font-lock-string-face))
+								 members))
+							 (semantic-find-tags-by-name-regexp
+							  "\\(:?name\\|id\\)$"
+							  (semantic-find-tags-by-type
+								"attribute"
+								(semantic-tag-get-attribute tag :attributes))))
+					 (when members
+						(apply #'concat " " (reverse members)))))
+				suffix)))
 
 
 ;;;
@@ -223,6 +187,8 @@ to successive attribute names and values of the current tag (via
 ;;;###autoload
 (defun semantic-default-xml-setup ()
   "Setup hook function for Lisp files and Semantic."
+  (semantic-install-function-overrides
+   '((parse-region . semantic-nxml-parse-region)))
   (make-variable-buffer-local 'semantic-idle-breadcrumbs-format-tag-list-function)
   (make-variable-buffer-local 'semantic-idle-breadcrumbs-separator)
 
@@ -236,15 +202,12 @@ to successive attribute names and values of the current tag (via
 
    ;;
    semantic-symbol->name-assoc-list-for-type-parts
-   '((variable . "Attributes")
-     (function . "Methods"))
+   '((element   . "elements")
+     (attribute . "attributes"))
 
-   semantic-symbol->name-assoc-list '((type     . "Elements")
-				      (variable . "Attributes")
-				      (function . "Functions")
-				      (include  . "Imports")
-				      (package  . "Namespace")
-				      (code     . "Code"))
+   semantic-symbol->name-assoc-list '((element   . "elements")
+												  (attribute . "attributes")
+												  (include   . "includes"))
 
    ;; Tag formatting.
    semantic-format-parent-separator "/"
