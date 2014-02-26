@@ -1,6 +1,6 @@
 ;;; xml.el ---
 ;;
-;; Copyright (C) 2012, 2014 Jan Moringen
+;; Copyright (C) 2014 Jan Moringen, Robert Haschke
 ;;
 ;; Author: Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
 ;; Keywords: parsing
@@ -44,7 +44,7 @@
 ;;; Lexical features and setup
 ;;
 
-(defmacro semantic-xml--doattribs (name-value &rest body)
+(defmacro semantic-nxml--doattribs (name-value &rest body)
   "Bind NAME-VALUE which has to be of the form
 
   (NAME-VAR VALUE-VAR &optional START-VAR END-VAR)
@@ -63,14 +63,13 @@ to successive attribute names and values of the current tag (via
 				 (,end   (xmltok-attribute-value-end ,attrib)))
 			,@body))))
 
-(defun semantic-xml--find-href ()
-  (semantic-xml--doattribs (name value)
-									(when (string= name "href")
-									  (cl-return value))))
+(defun semantic-nxml--find-href ()
+  (semantic-nxml--doattribs (name value)
+									 (when (string= name "href")
+										(cl-return value))))
 
-(defun semantic-nxml-parse-region 
-  (start end &optional nonterminal depth returnonerror)
-  "Bla"
+(defun semantic-nxml-parse-raw (start end &rest ignore)
+  "Parse nxml buffer into raw tag structure"
   (save-excursion
     (goto-char start)
     (xmltok-forward-prolog)
@@ -84,22 +83,19 @@ to successive attribute names and values of the current tag (via
 			 (let ((name   (xmltok-start-tag-local-name))
 					 (start  xmltok-start)
 					 (attributes))
-				(message "-> element: %s, stack: %d" name (length stack))
 				;; parse the attributes
-				(semantic-xml--doattribs (name value start end)
-												 (let ((tag (semantic-tag name 'attribute :value value)))
-													(semantic-tag-set-bounds tag start end)
-													(push tag attributes)))
+				(semantic-nxml--doattribs (name value start end)
+												  (let ((tag (semantic-tag name 'attribute :value value)))
+													 (semantic-tag-set-bounds tag start end)
+													 (push tag attributes)))
 
 				;; create new element tag with given attributes
 				(let ((tag (semantic-tag name 'element :attributes (reverse attributes))))
 				  (when (and (string= (semantic-tag-name tag) "include")
-								 (semantic-xml--find-href))
-					 (let ((href (semantic-xml--find-href)))
+								 (semantic-nxml--find-href))
+					 (let ((href (semantic-nxml--find-href)))
 						;; replace tag by include-type tag
-						(setq tag (semantic-tag-new-include href nil)))
-					 ;; push includes always as elements into results
-					 (push tag result))
+						(setq tag (semantic-tag-new-include href nil))))
 
 				  (semantic-tag-set-bounds tag start (1+ start))
 				  ;; push this tag into current list of children (first)
@@ -115,15 +111,42 @@ to successive attribute names and values of the current tag (via
 			 (let* ((tag   (pop stack))
 					  (start (semantic-tag-start tag))
 					  (mychildren (pop children)))
-				(message "<- element: %s, stack: %d" (semantic-tag-name tag) (length stack))
 				
 				(when mychildren
 				  (semantic-tag-put-attribute tag :children (nreverse mychildren)))
 				(semantic-tag-set-bounds tag start (point))
 
+				(when (eq (semantic-tag-class tag) 'include)
+				  ;; push includes always as elements into result
+				  (push tag result))
+
 				(when (not stack)
-					 (push tag result)))))
+				  (push tag result)))))
 		(nreverse result))))
+
+(defun semantic-nxml-expand-tag (tag)
+  "Recursively expand the raw tag."
+  (let ((attributes (semantic-tag-get-attribute tag :attributes))
+		  (children (semantic-tag-get-attribute tag :children)))
+    (when attributes (mapcar 'semantic-nxml-expand-tag attributes))
+    (when children (mapcar 'semantic-nxml-expand-tag children))
+    (car (semantic--tag-expand tag))))
+
+(defun semantic-nxml-parse-region (start end &rest ignore)
+  "Parse the current nxml buffer for semantic tags.
+Each tag returned is of the form:
+ (\"NAME\" include|element (:attributes ATTRIBUTES :children CHILDREN))
+
+It is an override of 'parse-region and must be installed by the
+function `semantic-install-function-overrides'."
+  (mapcar 'semantic-nxml-expand-tag
+          (semantic-nxml-parse-raw start end)))
+
+(defun semantic-nxml-parse-changes ()
+  "Parse changes in the current nxml buffer."
+  ;; NOTE: For now, just schedule a full reparse.
+  ;;       To be implemented later.
+  (semantic-parse-tree-set-needs-rebuild))
 
 
 ;;;
@@ -185,25 +208,22 @@ to successive attribute names and values of the current tag (via
 ;;
 
 ;;;###autoload
-(defun semantic-default-xml-setup ()
+(defun semantic-default-nxml-setup ()
   "Setup hook function for Lisp files and Semantic."
   (semantic-install-function-overrides
-   '((parse-region . semantic-nxml-parse-region)))
+   '((parse-region . semantic-nxml-parse-region)
+	  (parse-changes . semantic-nxml-parse-changes)))
+
   (make-variable-buffer-local 'semantic-idle-breadcrumbs-format-tag-list-function)
   (make-variable-buffer-local 'semantic-idle-breadcrumbs-separator)
 
   (setq
-   semantic-parser-name "nxml"
-
+   semantic-parser-name  "nxml"
+	;; setup a dummy parser table to enable parsing
    semantic--parse-table t
 
-   ;; Character used to separation a parent/child relationship
+   ;; character used to separation a parent/child relationship
    semantic-type-relation-separator-character '(".")
-
-   ;;
-   semantic-symbol->name-assoc-list-for-type-parts
-   '((element   . "elements")
-     (attribute . "attributes"))
 
    semantic-symbol->name-assoc-list '((element   . "elements")
 												  (attribute . "attributes")
@@ -212,14 +232,12 @@ to successive attribute names and values of the current tag (via
    ;; Tag formatting.
    semantic-format-parent-separator "/"
 
-   semantic-idle-breadcrumbs-format-tag-list-function
-   #'semantic-idle-breadcrumbs--format-linear
-   semantic-idle-breadcrumbs-separator
-   " "))
+   semantic-idle-breadcrumbs-format-tag-list-function 
+	#'semantic-idle-breadcrumbs--format-linear
+   semantic-idle-breadcrumbs-separator " "))
 
 ;;;###autoload
-(push (cons 'nxml-mode 'semantic-default-xml-setup)
-      semantic-new-buffer-setup-functions)
+(add-hook 'nxml-mode-hook 'semantic-default-nxml-setup)
 
 (provide 'semantic/bovine/xml)
 
