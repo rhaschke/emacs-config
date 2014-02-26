@@ -1,32 +1,14 @@
-(add-to-list 'auto-mode-alist '("\\.hsm$" . nxml-mode))
-
-(require 'nxml-speedbar)
-(speedbar-add-supported-extension ".hsm")
-
 (require 'nxml-script)
-(require 'nxml-where)
-(nxml-where-global-mode 1)
 
-;; formatting of breadcrumbs path in hsm files: only looking for state names
-(defun nxml-where-format-hsm-element (element)
-  ""
-  (let ((element-name   (plist-get element :local-name))
-		  (attribute      (plist-get element :attribute)))
-    (concat 
-	  (when (and attribute (string-match-p "STATE$\\|^REGION$" element-name))
-		 (let ((attribute-name   (plist-get attribute :local-name))
-				 (attribute-value  (plist-get attribute :value)))
-			(concat
-			 (propertize ":" 'face 'nxml-tag-delimiter)
-			 (propertize attribute-value 'face 'nxml-element-local-name)))))))
-(defun nxml-where-format-hsm-path (path)
-  ""
-  (mapconcat #'nxml-where-format-hsm-element path ""))
-(setq nxml-where-format-path-function #'nxml-where-format-hsm-path)
+(define-derived-mode hsm-mode nxml-mode "hsm"
+  "HSM major mode"
+)
 
-; regular expression to generate outline in hsm mode
-(setq-mode-local nxml-mode 
-	nxml-section-element-name-regexp "STATE\\|REGION\\|EVENT\\|ONEVENT")
+(add-to-list 'auto-mode-alist '("\\.hsm$" . hsm-mode))
+
+;; regular expression to generate outline in hsm mode
+(setq-mode-local hsm-mode
+					  nxml-section-element-name-regexp ".*STATE\\|REGION")
 
 ;; hsm error display
 (defun display-hsm-errors (message)
@@ -68,4 +50,4 @@
 					"dynamicHSM -m xcf:ShortTerm "
 					buffer-file-name))
 )
-(add-hook 'nxml-mode-hook 'rhaschke/hsm-mode-hook)
+(add-hook 'hsm-mode-hook 'rhaschke/hsm-mode-hook)
