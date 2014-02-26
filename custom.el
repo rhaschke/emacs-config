@@ -14,7 +14,6 @@
  '(mouse-drag-copy-region t)
  '(pop-up-windows nil)
  '(safe-local-variable-values (quote ((c-file-offsets (substatement-open . 0)) (eval progn (c-set-offset (quote innamespace) (quote +))) (ispell-dictionary . "de_DE") (ispell-dictionary . "american"))))
- '(semanticdb-find-default-throttle (quote (local project unloaded system)))
  '(show-paren-mode t))
 (custom-set-faces
   ;; custom-set-faces was added by Custom.

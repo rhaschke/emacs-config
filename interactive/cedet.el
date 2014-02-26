@@ -29,8 +29,6 @@
 ;(add-to-list 'semantic-default-submodes 'global-semantic-idle-summary-mode) 
 ; show current function in header line
 ;(add-to-list 'semantic-default-submodes 'global-semantic-stickyfunc-mode) 
-; show breadcrumbs
-(global-semantic-idle-breadcrumbs-mode 1)
 
 ;; Activate semantic
 (semantic-mode 1)
@@ -40,6 +38,15 @@
 (require 'semantic/ia)       ; interactive functions for semantic analyzer
 (require 'semantic/decorate/include) ; decoration modes for include statements
 (require 'semantic/db-ebrowse) ; ebrowse backend for semanticdb
+(require 'semantic/idle)       ; idle scheduler
+
+; show breadcrumbs in header line
+(global-semantic-idle-breadcrumbs-mode 1)
+(setq semantic-idle-breadcrumbs-format-tag-function 'semantic-format-tag-name)
+(setq semantic-idle-breadcrumbs-format-tag-list-function 'semantic-idle-breadcrumbs--format-innermost-first)
+
+; limit semantic search to these items
+(setq semanticdb-find-default-throttle '(local project unloaded system))
 
 ; allow gnu global as backend for semanticdb
 (when (and (require 'cedet-global nil 'noerror)
