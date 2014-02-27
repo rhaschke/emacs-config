@@ -121,7 +121,7 @@ function `semantic-install-function-overrides'."
 				  (semantic-tag-put-attribute tag :children (nreverse mychildren)))
 				(semantic-tag-set-bounds tag start (point))
 
-				(when (eq (semantic-tag-class tag) 'include)
+				(when (semantic-tag-of-class-p tag 'include)
 				  ;; push includes always as elements into result
 				  (push tag result))
 
@@ -153,8 +153,7 @@ function `semantic-install-function-overrides'."
   (tag &optional parent color)
   "Return an abbreviated string describing TAG."
   (let* ((class  (semantic-tag-class tag))
-			(name   (semantic-format-tag-canonical-name
-						tag parent color))
+			(name   (semantic-format-tag-name tag parent color))
 			(prefix (case class
 						 (include  "include ")
 						 (t        "")))
@@ -167,13 +166,10 @@ function `semantic-install-function-overrides'."
   (tag &optional parent color)
   "Return a string describing TAG."
   (let ((result (semantic-nxml-format-tag-abbreviate tag parent color))
-		  (attribs (when (eq (semantic-tag-class tag) 'element)
-						 (mapconcat 'semantic-nxml-format-tag-abbreviate
+		  (attribs (when (semantic-tag-of-class-p tag 'element)
+						 (mapconcat (lambda (c) (semantic-nxml-format-tag-abbreviate c tag color))
 										(semantic-tag-get-attribute tag :attributes)
 										" "))))
-;						 (mapconcat (lambda (t) (semantic-nxml-format-tag-abbreviate t tag color))
-;										(semantic-tag-get-attribute tag :attributes)
-;										" "))))
 	 (if attribs (concat result ": " attribs) result)))
 
 
@@ -195,12 +191,12 @@ function `semantic-install-function-overrides'."
 ;; define how the new tag classes should be displayed in ecb-methods-buffer
 (let ((defaults (car (cdar (get 'ecb-show-tags 'standard-value))))
 		(nxml-settings '(nxml-mode (element flattened nil)
-											(attribute flattened nil)
+											(attribute hidden nil)
 											(include collapsed nil))))
   (nconc defaults (list nxml-settings)))
 
 (let ((defaults (car (cdar (get 'ecb-tag-display-function 'standard-value))))
-		(nxml-settings '(nxml-mode . ecb-format-tag-abbreviate)))
+		(nxml-settings '(nxml-mode . ecb-format-tag-summarize)))
   (nconc defaults (list nxml-settings)))
 
 ;; define faces for elements and attributes
