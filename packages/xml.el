@@ -135,72 +135,76 @@ function `semantic-install-function-overrides'."
   ;;       To be implemented later.
   (semantic-parse-tree-set-needs-rebuild))
 
+(defun semantic-nxml-tag-components (tag)
+  "Return list of components of TAG"
+  (let ((children (semantic-tag-get-attribute tag :children))
+		  (attributes (semantic-tag-get-attribute tag :attributes)))
+	 (append attributes children)))
+
 
 ;;;
 ;;
 
-(define-mode-local-override semantic-format-tag-abbreviate
-  nxml-mode (tag &optional parent color)
+(defun semantic-nxml-format-tag-abbreviate
+  (tag &optional parent color)
   "Return an abbreviated string describing TAG."
-  ;; Do lots of complex stuff here.
   (let* ((class  (semantic-tag-class tag))
 			(name   (semantic-format-tag-canonical-name
 						tag parent color))
 			(prefix (case class
-						 (attribute "@")
-						 (element   "<")
-						 (include  "<include ")
+						 (include  "include ")
 						 (t        "")))
 			(suffix (case class
-						 (attribute "")
-						 (element   ">")
-						 (include   ">")
+						 (attribute (concat "=" (semantic-tag-get-attribute tag :value)))
 						 (t         ""))))
-    (concat prefix
-				name
-				(when (eq class 'element)
-				  (let (members)
-					 (mapc (lambda (child)
-								(push
-								 (concat
-								  (semantic-format-tag-name child nil color)
-								  "="
-								  (propertize
-									(concat
-									 "\""
-									 (semantic-tag-variable-default child)
-									 "\"")
-									'face 'font-lock-string-face))
-								 members))
-							 (semantic-find-tags-by-name-regexp
-							  "\\(:?name\\|id\\)$"
-							  (semantic-find-tags-by-type
-								"attribute"
-								(semantic-tag-get-attribute tag :attributes))))
-					 (when members
-						(apply #'concat " " (reverse members)))))
-				suffix)))
+    (concat prefix name suffix)))
 
-
-;;;
-;;
-
-(define-mode-local-override semantic-analyze-unsplit-name
-  nxml-mode (namelist)
-  "Bla"
-  (concat "/" (mapconcat 'identity namelist "/")))
+(defun semantic-nxml-format-tag-summarize
+  (tag &optional parent color)
+  "Return a string describing TAG."
+  (let ((result (semantic-nxml-format-tag-abbreviate tag parent color))
+		  (attribs (when (eq (semantic-tag-class tag) 'element)
+						 (mapconcat 'semantic-nxml-format-tag-abbreviate
+										(semantic-tag-get-attribute tag :attributes)
+										" "))))
+;						 (mapconcat (lambda (t) (semantic-nxml-format-tag-abbreviate t tag color))
+;										(semantic-tag-get-attribute tag :attributes)
+;										" "))))
+	 (if attribs (concat result ": " attribs) result)))
 
 
 ;;; Enable Semantic in `nxml-mode'.
 ;;
 
+(semantic-install-function-overrides
+ '(
+	(parse-region . semantic-nxml-parse-region)
+	(parse-changes . semantic-nxml-parse-changes)
+	(tag-components . semantic-nxml-tag-components)
+	(format-tag-abbreviate . semantic-nxml-format-tag-abbreviate)
+	(format-tag-summarize . semantic-nxml-format-tag-summarize)
+	)
+ t 'nxml-mode)
+
+(require 'ecb)
+;; define how the new tag classes should be displayed in ecb-methods-buffer
+(let ((defaults (car (cdar (get 'ecb-show-tags 'standard-value))))
+		(nxml-settings '(nxml-mode (element flattened nil)
+											(attribute flattened nil)
+											(include collapsed nil))))
+  (nconc defaults (list nxml-settings)))
+
+(let ((defaults (car (cdar (get 'ecb-tag-display-function 'standard-value))))
+		(nxml-settings '(nxml-mode . ecb-format-tag-abbreviate)))
+  (nconc defaults (list nxml-settings)))
+
+;; define faces for elements and attributes
+(nconc semantic-format-face-alist '((element . font-lock-function-name-face)
+												(attribute . font-lock-variable-name-face)))
+
 ;;;###autoload
 (defun semantic-default-nxml-setup ()
   "Setup hook function for Lisp files and Semantic."
-  (semantic-install-function-overrides
-   '((parse-region . semantic-nxml-parse-region)
-	  (parse-changes . semantic-nxml-parse-changes)))
-
   (make-variable-buffer-local 'semantic-idle-breadcrumbs-format-tag-list-function)
   (make-variable-buffer-local 'semantic-idle-breadcrumbs-separator)
 
