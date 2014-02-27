@@ -1,3 +1,31 @@
+;;; xml.el ---
+;;
+;; Copyright (C) 2014 Robert Haschke, Jan Moringen
+;;
+;; Author: Robert Haschke <rhaschke@techfak.uni-bielefeld.de>
+;; Keywords: parsing
+;;
+;; This Program is free software: you can redistribute it and/or modify
+;; it under the terms of the GNU General Public License as published by
+;; the Free Software Foundation, either version 3 of the License, or
+;; (at your option) any later version.
+;;
+;; This Program is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+;; GNU General Public License for more details.
+;;
+;; You should have received a copy of the GNU General Public License
+;; along with this program. If not, see <http://www.gnu.org/licenses>.
+
+
+;;; Commentary:
+;;
+
+
+;;; Code:
+;;
+
 (require 'nxml-script)
 
 (define-derived-mode hsm-mode nxml-mode "hsm"
@@ -52,18 +80,16 @@
 (defun semantic-hsm-parse-region (start end &rest ignore)
   "Parse the current hsm buffer for semantic tags."
   (let ((tags (semantic-nxml-parse-region start end)))
-	 (destructuring-bind (states events) (semantic-hsm-transform-tags tags)
-		(nconc (nreverse states) (nreverse events)))))
+	 (destructuring-bind (nodes events) (semantic-hsm-transform-tags tags)
+		(nconc (nreverse nodes) (nreverse events)))))
 		
 (defun semantic-hsm-tag-components (tag)
   "Return list of components of TAG"
-  (semantic-tag-get-attribute tag :states))
+  (semantic-tag-get-attribute tag :children))
 
 (defun semantic-hsm-tag-components-with-overlays (tag)
   "Return list of components of TAG"
   (semantic-hsm-tag-components tag))
-
-(defvar state-regexp ".*STATE\\|REGION")
 
 (defmacro let-attrs (tag bindings &rest body)
   "(let-attrs tag-form ((name \"name\" \"default\")) name)"
@@ -99,47 +125,56 @@
 ;(xpath-from-sender-and-name "s1,s2, s3:foo") 
 ;(xpath-from-sender-and-name "s1:foo")
 ;(xpath-from-sender-and-name "*:foo")
-(assert (null (xpath-from-sender-and-name nil)))
-(assert (string= (xpath-from-sender-and-name "foo") "/EVENT[@name='foo']"))
+;(assert (null (xpath-from-sender-and-name nil)))
+;(assert (string= (xpath-from-sender-and-name "foo") "/EVENT[@name='foo']"))
 							
+(defvar state-regexp ".*STATE\\|REGION")
+(defvar recursive-regexp "HSM\\|VAR\\|EVENTS")
+
 (defun semantic-hsm-transform-tags (tags)
-  "Remap nxml tags into (states events) list
-Both, states and events are in reverse order"
-  (let (states events)
+  "Remap nxml tags into (nodes events) list
+Both, nodes and events are in reverse order"
+  (let (nodes events)
 	 (dolist (tag tags)
 		(let ((class (semantic-tag-class tag))
 				(name  (semantic-tag-name tag))
 				(atts  (semantic-tag-get-attribute tag :attributes))
 				(children (semantic-tag-get-attribute tag :children)))
-		  (when (eq class 'element)
-			 (cond 
-			  ;; handle states
-			  ((string-match-p state-regexp name)
-				(let-attrs tag ((name "name"))
-				  (let ((stateTag (semantic-tag name 'state)))
-					 (apply 'semantic-tag-set-bounds stateTag (semantic-tag-bounds tag))
-					 (destructuring-bind (s e) (semantic-hsm-transform-tags children)
-						(semantic-tag-put-attribute stateTag :states (nreverse s))
-						(setq events (append e events)))
-					 (push stateTag states))))
-			  ;; events
-			  ((string= "EVENT" name)
-				(let-attrs tag ((name    "name")
-									 (sender  "sender")
-									 (alias   "alias" name)
-									 (actions "actions" "INSERT")
-									 (xpath   "xpath" (xpath-from-sender-and-name name sender))
-									 (internal "internal")
-									 (rate    "rate"))
-				  (let ((eventTag (semantic-tag alias 'event :actions actions :xpath xpath)))
-					 (apply 'semantic-tag-set-bounds eventTag (semantic-tag-bounds tag))
-					 (push eventTag events))))
-			  ;; other elements
-			  (t
-				(destructuring-bind (s e) (semantic-hsm-transform-tags children)
-				  (setq events (append e events)
-						  states s)))))))
-	 (list states events)))
+		  (case class 
+			 ;; element nodes
+			 (element
+			  (cond 
+				;; handle states
+				((string-match-p state-regexp name)
+				 (let-attrs tag ((name "name"))
+					(let ((stateTag (semantic-tag name 'state)))
+					  (apply 'semantic-tag-set-bounds stateTag (semantic-tag-bounds tag))
+					  (destructuring-bind (n e) (semantic-hsm-transform-tags children)
+						 (semantic-tag-put-attribute stateTag :children (nreverse n))
+						 (setq events (append e events)))
+					  (push stateTag nodes))))
+				;; events
+				((string= "EVENT" name)
+				 (let-attrs tag ((name    "name")
+									  (sender  "sender")
+									  (alias   "alias" name)
+									  (actions "actions" "INSERT")
+									  (xpath   "xpath" (xpath-from-sender-and-name name sender))
+									  (internal "internal")
+									  (rate    "rate"))
+					(let ((eventTag (semantic-tag alias 'event :actions actions :xpath xpath)))
+					  (apply 'semantic-tag-set-bounds eventTag (semantic-tag-bounds tag))
+					  (push eventTag events))))
+				;; other elements
+				((string-match-p recursive-regexp name)
+				 (destructuring-bind (n e) (semantic-hsm-transform-tags children)
+					(setq events (append e events)
+							nodes (append n nodes))))))
+
+			 ;; include nodes
+			 (include (push tag nodes))
+			 )))
+	 (list nodes events)))
 					 
 (defun semantic-hsm-format-tag-abbreviate
   (tag &optional parent color)
@@ -166,8 +201,8 @@ Both, states and events are in reverse order"
 ;; define how the new tag classes should be displayed in ecb-methods-buffer
 (let ((defaults (car (cdar (get 'ecb-show-tags 'standard-value))))
 		(hsm-settings '(hsm-mode (state flattened nil)
-										 (event collapsed nil)
-										 (include collapsed nil))))
+										 (event collapsed name)
+										 (t collapsed nil))))
   (nconc defaults (list hsm-settings)))
 
 (let ((defaults (car (cdar (get 'ecb-tag-display-function 'standard-value))))
@@ -176,7 +211,7 @@ Both, states and events are in reverse order"
 
 ;; define faces for states and events
 (nconc semantic-format-face-alist '((state . font-lock-function-name-face)
-												(event . font-lock-variable-name-face)))
+												(event . font-lock-type-face)))
 
 ;;;###autoload
 (defun semantic-default-hsm-setup ()
@@ -184,7 +219,8 @@ Both, states and events are in reverse order"
   (setq
 	semantic-parser-name  "hsm"
    semantic-symbol->name-assoc-list '((state . "states")
-												  (event . "events"))
+												  (event . "events")
+												  (include . "includes"))
 	semantic-idle-breadcrumbs-separator ":"))
 
 ;;;###autoload
