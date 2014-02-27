@@ -53,19 +53,11 @@
   "Parse the current hsm buffer for semantic tags."
   (let ((tags (semantic-nxml-parse-region start end)))
 	 (destructuring-bind (states events) (semantic-hsm-transform-tags tags)
-		;; summarize several states within HSM node
-		(when (> (length states) 1)
-		  (setq start (semantic-tag-start (first states))
-				  end (semantic-tag-end (car (last states)))
-				  states (semantic-tag "HSM" 'state :states states))
-		  (semantic-tag-set-bounds states start end))
-		(nconc states (nreverse events)))))
+		(nconc (nreverse states) (nreverse events)))))
 		
 (defun semantic-hsm-tag-components (tag)
   "Return list of components of TAG"
-  (let ((states (semantic-tag-get-attribute tag :children))
-		  (events (semantic-tag-get-attribute tag :attributes)))
-	 (append states events)))
+  (semantic-tag-get-attribute tag :states))
 
 (defun semantic-hsm-tag-components-with-overlays (tag)
   "Return list of components of TAG"
@@ -73,9 +65,46 @@
 
 (defvar state-regexp ".*STATE\\|REGION")
 
+(defmacro let-attrs (tag bindings &rest body)
+  "(let-attrs tag-form ((name \"name\" \"default\")) name)"
+  (declare (indent 2))
+  (let ((atts-var (gensym)))
+	 (flet ((do-binding (binding)
+			    (destructuring-bind (name attribute-name &optional default) binding
+					(let ((attr-tag (gensym)))
+					  `(,name (let ((,attr-tag (semantic-find-first-tag-by-name 
+														 ,attribute-name ,atts-var)))
+									(if ,attr-tag
+										 (semantic-tag-get-attribute ,attr-tag :value)
+									  ,default)))))))
+		`(let* ((,atts-var (semantic-tag-get-attribute ,tag :attributes))			 
+				  ,@(mapcar 'do-binding bindings))
+			,@body))))
+
+(defun xpath-from-sender-and-name (name &optional sender)
+  (when name
+	 (unless sender 
+		(assert (string-match "\\(?:\\([^:]+\\):\\)?\\(.*\\)" name))
+		(setq sender (match-string 1 name)
+				name (match-string 2 name)))
+	 (when (string= sender "*") (setq sender nil))
+	 (when sender 
+		(setq sender (concat " and ("
+									(mapconcat (lambda (s) (format "@sender='%s'" s))
+												  (split-string sender ", *")
+												  " or ")
+									")")))
+	 (format "/EVENT[@name='%s'%s]" name (or sender ""))))
+
+;(xpath-from-sender-and-name "s1,s2, s3:foo") 
+;(xpath-from-sender-and-name "s1:foo")
+;(xpath-from-sender-and-name "*:foo")
+(assert (null (xpath-from-sender-and-name nil)))
+(assert (string= (xpath-from-sender-and-name "foo") "/EVENT[@name='foo']"))
+							
 (defun semantic-hsm-transform-tags (tags)
   "Remap nxml tags into (states events) list
-states is in correct order, events is reverse"
+Both, states and events are in reverse order"
   (let (states events)
 	 (dolist (tag tags)
 		(let ((class (semantic-tag-class tag))
@@ -86,44 +115,63 @@ states is in correct order, events is reverse"
 			 (cond 
 			  ;; handle states
 			  ((string-match-p state-regexp name)
-				(let* ((att (semantic-find-first-tag-by-name "name" atts))
-						 (name (semantic-tag-get-attribute att :value))
-						 (stateTag (semantic-tag name 'state)))
-				  (apply 'semantic-tag-set-bounds stateTag (semantic-tag-bounds tag))
-				  (destructuring-bind (s e) (semantic-hsm-transform-tags children)
-					 (semantic-tag-put-attribute stateTag :states s)
-					 (setq events (append e events)))
-				  (push stateTag states)))
+				(let-attrs tag ((name "name"))
+				  (let ((stateTag (semantic-tag name 'state)))
+					 (apply 'semantic-tag-set-bounds stateTag (semantic-tag-bounds tag))
+					 (destructuring-bind (s e) (semantic-hsm-transform-tags children)
+						(semantic-tag-put-attribute stateTag :states (nreverse s))
+						(setq events (append e events)))
+					 (push stateTag states))))
+			  ;; events
+			  ((string= "EVENT" name)
+				(let-attrs tag ((name    "name")
+									 (sender  "sender")
+									 (alias   "alias" name)
+									 (actions "actions" "INSERT")
+									 (xpath   "xpath" (xpath-from-sender-and-name name sender))
+									 (internal "internal")
+									 (rate    "rate"))
+				  (let ((eventTag (semantic-tag alias 'event :actions actions :xpath xpath)))
+					 (apply 'semantic-tag-set-bounds eventTag (semantic-tag-bounds tag))
+					 (push eventTag events))))
 			  ;; other elements
 			  (t
 				(destructuring-bind (s e) (semantic-hsm-transform-tags children)
-				  (assert (not states))
 				  (setq events (append e events)
 						  states s)))))))
-			 
-	 (list (nreverse states) events)))
+	 (list states events)))
 					 
+(defun semantic-hsm-format-tag-abbreviate
+  (tag &optional parent color)
+  "Return an abbreviated string describing TAG."
+  (let* ((class  (semantic-tag-class tag))
+			(name   (semantic-format-tag-name tag parent color))
+			(prefix (case class
+						 (include  "include ")
+						 (t        "")))
+			(suffix (case class
+						 (t         ""))))
+    (concat prefix name suffix)))
 
 (semantic-install-function-overrides
  '(
 	(parse-region . semantic-hsm-parse-region)
 	(tag-components . semantic-hsm-tag-components)
 	(tag-components-with-overlays . semantic-hsm-tag-components-with-overlays)
-	(format-tag-abbreviate . semantic-nxml-format-tag-abbreviate)
-	(format-tag-summarize . semantic-nxml-format-tag-summarize)
+	(format-tag-abbreviate . semantic-hsm-format-tag-abbreviate)
 	)
  t 'hsm-mode)
 
 (require 'ecb)
 ;; define how the new tag classes should be displayed in ecb-methods-buffer
 (let ((defaults (car (cdar (get 'ecb-show-tags 'standard-value))))
-		(hsm-settings '(hsm-mode (element flattened nil)
-										 (attribute hidden nil)
+		(hsm-settings '(hsm-mode (state flattened nil)
+										 (event collapsed nil)
 										 (include collapsed nil))))
   (nconc defaults (list hsm-settings)))
 
 (let ((defaults (car (cdar (get 'ecb-tag-display-function 'standard-value))))
-		(hsm-settings '(hsm-mode . ecb-format-tag-summarize)))
+		(hsm-settings '(hsm-mode . ecb-format-tag-abbreviate)))
   (nconc defaults (list hsm-settings)))
 
 ;; define faces for states and events
@@ -136,7 +184,8 @@ states is in correct order, events is reverse"
   (setq
 	semantic-parser-name  "hsm"
    semantic-symbol->name-assoc-list '((state . "states")
-												  (event . "events"))))
+												  (event . "events"))
+	semantic-idle-breadcrumbs-separator ":"))
 
 ;;;###autoload
 (add-hook 'hsm-mode-hook 'semantic-default-hsm-setup)
