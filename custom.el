@@ -12,7 +12,6 @@
  '(ecb-tip-of-the-day nil)
  '(grep-find-command "find . -type f -not -path \"*/.svn*\" -print0 | \"xargs\" -0 -e grep -nH -e ")
  '(mouse-drag-copy-region t)
- '(pop-up-windows nil)
  '(safe-local-variable-values (quote ((c-file-offsets (substatement-open . 0)) (eval progn (c-set-offset (quote innamespace) (quote +))) (ispell-dictionary . "de_DE") (ispell-dictionary . "american"))))
  '(show-paren-mode t))
 (custom-set-faces
