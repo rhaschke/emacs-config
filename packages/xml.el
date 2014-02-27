@@ -141,6 +141,10 @@ function `semantic-install-function-overrides'."
 		  (attributes (semantic-tag-get-attribute tag :attributes)))
 	 (append attributes children)))
 
+(defun semantic-nxml-tag-components-with-overlays (tag)
+  "Return list of components of TAG"
+  (semantic-nxml-tag-components tag))
+
 
 ;;;
 ;;
@@ -181,6 +185,7 @@ function `semantic-install-function-overrides'."
 	(parse-region . semantic-nxml-parse-region)
 	(parse-changes . semantic-nxml-parse-changes)
 	(tag-components . semantic-nxml-tag-components)
+	(tag-components-with-overlays . semantic-nxml-tag-components-with-overlays)
 	(format-tag-abbreviate . semantic-nxml-format-tag-abbreviate)
 	(format-tag-summarize . semantic-nxml-format-tag-summarize)
 	)
@@ -204,7 +209,7 @@ function `semantic-install-function-overrides'."
 
 ;;;###autoload
 (defun semantic-default-nxml-setup ()
-  "Setup hook function for Lisp files and Semantic."
+  "Setup hook function for nxml and semantic."
   (make-variable-buffer-local 'semantic-idle-breadcrumbs-format-tag-list-function)
   (make-variable-buffer-local 'semantic-idle-breadcrumbs-separator)
 
@@ -213,15 +218,9 @@ function `semantic-install-function-overrides'."
 	;; setup a dummy parser table to enable parsing
    semantic--parse-table t
 
-   ;; character used to separation a parent/child relationship
-   semantic-type-relation-separator-character '(".")
-
    semantic-symbol->name-assoc-list '((element   . "elements")
 												  (attribute . "attributes")
 												  (include   . "includes"))
-
-   ;; Tag formatting.
-   semantic-format-parent-separator "/"
 
    semantic-idle-breadcrumbs-format-tag-list-function 
 	#'semantic-idle-breadcrumbs--format-linear
@@ -229,6 +228,24 @@ function `semantic-install-function-overrides'."
 
 ;;;###autoload
 (add-hook 'nxml-mode-hook 'semantic-default-nxml-setup)
+
+(require 'semantic/idle)       ; idle scheduler
+
+;;; redefine semantic-idle-breadcrumbs to fix a bug
+(define-semantic-idle-service semantic-idle-breadcrumbs
+  "Display breadcrumbs for the tag under point and its parents."
+  (let* ((scope    (semantic-calculate-scope))
+	 (tag-list (if (and scope (oref scope parents))
+		       ;; If there is a scope, extract the tag and its
+		       ;; parents.
+		       (append (oref scope parents)
+			       (when (oref scope tag)
+				 (list (oref scope tag))))
+		     ;; Fall back to tags by overlay
+		     (semantic-find-tag-by-overlay))))
+    ;; Display the tags.
+    (funcall semantic-idle-breadcrumbs-display-function tag-list)))
+
 
 (provide 'semantic/bovine/xml)
 

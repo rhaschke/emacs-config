@@ -122,22 +122,5 @@
 (global-semantic-decoration-mode 1)
 
 
-
-;;; redefine semantic-idle-breadcrumbs to fix a bug
-(define-semantic-idle-service semantic-idle-breadcrumbs
-  "Display breadcrumbs for the tag under point and its parents."
-  (let* ((scope    (semantic-calculate-scope))
-	 (tag-list (if (and scope (oref scope parents))
-		       ;; If there is a scope, extract the tag and its
-		       ;; parents.
-		       (append (oref scope parents)
-			       (when (oref scope tag)
-				 (list (oref scope tag))))
-		     ;; Fall back to tags by overlay
-		     (semantic-find-tag-by-overlay))))
-    ;; Display the tags.
-    (funcall semantic-idle-breadcrumbs-display-function tag-list)))
-
-
 ;;; cedet.el ends here
 
