@@ -35,6 +35,8 @@
 
 ;; submodules of semantic
 (require 'semantic/bovine/c) ; support c/c++ parsing
+(require 'semantic/bovine/make) ; support makefile parsing
+(require 'semantic/bovine/el); support elisp parsing
 (require 'semantic/ia)       ; interactive functions for semantic analyzer
 (require 'semantic/decorate/include) ; decoration modes for include statements
 (require 'semantic/db-ebrowse) ; ebrowse backend for semanticdb
