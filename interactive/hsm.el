@@ -1,4 +1,4 @@
-;;; xml.el ---
+;;; hsm.el ---
 ;;
 ;; Copyright (C) 2014 Robert Haschke, Jan Moringen
 ;;
@@ -107,7 +107,7 @@
 				  ,@(mapcar 'do-binding bindings))
 			,@body))))
 
-(defun xpath-from-sender-and-name (name &optional sender)
+(defun semantic-hsm-get-xpath (name &optional sender)
   (when name
 	 (unless sender 
 		(assert (string-match "\\(?:\\([^:]+\\):\\)?\\(.*\\)" name))
@@ -122,12 +122,15 @@
 									")")))
 	 (format "/EVENT[@name='%s'%s]" name (or sender ""))))
 
-;(xpath-from-sender-and-name "s1,s2, s3:foo") 
-;(xpath-from-sender-and-name "s1:foo")
-;(xpath-from-sender-and-name "*:foo")
-;(assert (null (xpath-from-sender-and-name nil)))
-;(assert (string= (xpath-from-sender-and-name "foo") "/EVENT[@name='foo']"))
-							
+;(semantic-hsm-get-xpath "s1,s2, s3:foo") 
+;(semantic-hsm-get-xpath "s1:foo")
+;(semantic-hsm-get-xpath "*:foo")
+;(assert (null (semantic-hsm-get-xpath nil)))
+;(assert (string= (semantic-hsm-get-xpath "foo") "/EVENT[@name='foo']"))
+(defun semantic-hsm-parse-boolean (string)
+  "parse string into a boolean value: t / nil"
+  (if (and string (string-match-p "^ *\\(true\\|1\\) *$" string)) t nil))
+
 (defvar state-regexp ".*STATE\\|REGION")
 (defvar recursive-regexp "HSM\\|VAR\\|EVENTS")
 
@@ -159,10 +162,17 @@ Both, nodes and events are in reverse order"
 									  (sender  "sender")
 									  (alias   "alias" name)
 									  (actions "actions" "INSERT")
-									  (xpath   "xpath" (xpath-from-sender-and-name name sender))
+									  (xpath   "xpath" (semantic-hsm-get-xpath name sender))
 									  (internal "internal")
 									  (rate    "rate"))
-					(let ((eventTag (semantic-tag alias 'event :actions actions :xpath xpath)))
+					(let* ((internal (semantic-hsm-parse-boolean internal))
+							 (xpath   (if internal nil xpath))
+							 (actions (if internal nil actions))
+							 (eventTag (semantic-tag alias 'event 
+															:actions actions 
+															:xpath xpath
+															:internal internal
+															:rate rate)))
 					  (apply 'semantic-tag-set-bounds eventTag (semantic-tag-bounds tag))
 					  (push eventTag events))))
 				;; other elements
@@ -175,18 +185,44 @@ Both, nodes and events are in reverse order"
 			 (include (push tag nodes))
 			 )))
 	 (list nodes events)))
-					 
+
+(defun semantic-hsm-format-event (tag &optional parent color)
+  "format event tag"
+  (let* ((xpath (semantic--format-colorize-text
+					  (semantic-tag-get-attribute tag :xpath) 'function))
+			(actions (semantic--format-colorize-text
+						 (semantic-tag-get-attribute tag :actions) 'comment))
+			(rate (semantic-tag-get-attribute tag :rate))
+			(rate (when rate (semantic--format-colorize-text
+									(concat "rate=" rate) 'keyword)))
+			(internal (semantic-tag-get-attribute tag :internal))
+			(name (semantic-format-tag-name tag parent color)))
+	 (when (and color (featurep 'font-lock) internal)
+		(setq name (semantic--format-colorize-merge-text name 'static)))
+	 (mapconcat 'identity 
+					(remove-if (lambda (s) (string= s ""))
+								  (remove-if 'null (list name xpath actions rate)))
+					" ")))
+
 (defun semantic-hsm-format-tag-abbreviate
   (tag &optional parent color)
   "Return an abbreviated string describing TAG."
-  (let* ((class  (semantic-tag-class tag))
-			(name   (semantic-format-tag-name tag parent color))
-			(prefix (case class
-						 (include  "include ")
-						 (t        "")))
-			(suffix (case class
-						 (t         ""))))
-    (concat prefix name suffix)))
+  (let ((class  (semantic-tag-class tag)))
+	 (case class
+		(event (semantic-format-tag-name tag parent color))
+		(state (semantic-format-tag-name tag parent color))
+		(t (semantic-nxml-format-tag-abbreviate tag parent color)))))
+
+(defun semantic-hsm-format-tag-summarize
+  (tag &optional parent color)
+  "Return an abbreviated string describing TAG."
+  (let ((class  (semantic-tag-class tag)))
+	 (case class
+		(event (semantic-hsm-format-event tag parent color))
+		(t (semantic-hsm-format-tag-abbreviate tag parent color)))))
+
+;(semantic-hsm-format-tag-summarize
+; (semantic-tag "myevent" 'event :internal t :rate "1.2") nil t)
 
 (semantic-install-function-overrides
  '(
@@ -194,6 +230,7 @@ Both, nodes and events are in reverse order"
 	(tag-components . semantic-hsm-tag-components)
 	(tag-components-with-overlays . semantic-hsm-tag-components-with-overlays)
 	(format-tag-abbreviate . semantic-hsm-format-tag-abbreviate)
+	(format-tag-summarize . semantic-hsm-format-tag-summarize)
 	)
  t 'hsm-mode)
 
@@ -206,7 +243,7 @@ Both, nodes and events are in reverse order"
   (nconc defaults (list hsm-settings)))
 
 (let ((defaults (car (cdar (get 'ecb-tag-display-function 'standard-value))))
-		(hsm-settings '(hsm-mode . ecb-format-tag-abbreviate)))
+		(hsm-settings '(hsm-mode . ecb-format-tag-summarize)))
   (nconc defaults (list hsm-settings)))
 
 ;; define faces for states and events
