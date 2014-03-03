@@ -9,7 +9,9 @@
 	 (add-to-list 'ac-dictionary-directories "~/.emacs.d/ac-dict")
 	 (ac-config-default)
 	 (setq ac-auto-start 3) ; auto-start completion with this number of chars
-	 (setq ac-auto-show-menu 0.8)) ; delay [s] for showing completion menu
+	 (setq ac-auto-show-menu 0.8) ; delay [s] for showing completion menu
+	 (ac-flyspell-workaround)
+	 )
   (progn 
 	 (message "auto-complete package not available")
     ; show completions when idle
@@ -78,7 +80,8 @@
   (when (boundp 'ac-source-semantic)
 	 (add-to-list 'ac-sources 'ac-source-semantic))
   (when (boundp 'ac-source-gtags)
-	 (add-to-list 'ac-sources 'ac-source-gtags)))
+	 (add-to-list 'ac-sources 'ac-source-gtags))
+  (ecb-activate))
 (add-hook 'c-mode-common-hook 'my-c-mode-cedet-hook)
 
 ;; customisation of modes
