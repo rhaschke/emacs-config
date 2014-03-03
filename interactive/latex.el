@@ -1,15 +1,23 @@
 ;; Makes AUCTeX guess mode from file extension instead of content
 (setq TeX-force-default-mode t)
 
-;; define some LaTeX specific keys
-(add-hook 'LaTeX-mode-hook
-  (function (lambda ()
-    (local-set-key [C-tab] 'TeX-complete-symbol)
-	 (local-set-key [f8] 'TeX-next-error)
-	 (local-set-key [f9] 'TeX-command-master)
-)))
-(add-hook 'LaTeX-mode-hook 'LaTeX-math-mode)
-(add-hook 'LaTeX-mode-hook 'flyspell-mode)
+;; auto-completion
+(require 'ac-math)
+(add-to-list 'ac-modes 'LaTeX-mode)
+
+(defun rhaschke/latex-mode-hook ()
+  (flyspell-mode 1)
+  (local-set-key [C-tab] 'TeX-complete-symbol)
+  (local-set-key [f8] 'TeX-next-error)
+  (local-set-key [f9] 'TeX-command-master)
+  (setq ac-sources '(ac-source-dictionary 
+			 ac-source-words-in-same-mode-buffers
+			 ac-source-math-unicode
+			 ac-source-math-latex 
+			 ac-source-latex-commands
+			 ac-source-filename))
+)
+(add-hook 'LaTeX-mode-hook 'rhaschke/latex-mode-hook)
 
 (setq TeX-auto-save nil)
 (setq TeX-parse-self t)
@@ -54,15 +62,13 @@
 
 
 ;; reftex
-;(add-hook 'LaTeX-mode-hook 'turn-on-reftex)
+;(add-hook 'latex-mode-hook 'turn-on-reftex)
 ;(setq reftex-plug-into-AUCTeX t)
 ;(add-hook 'reftex-load-hook 'imenu-add-menubar-index)
 ;(add-hook 'reftex-mode-hook 'imenu-add-menubar-index)
 
 ;; BiBTeX variables
 (setq bibtex-entry-format '(opts-or-alts realign last-comma))
-
-
 
 ;;; Latex word count
 (setq latex-word-count-options "-brief") ;;short output
