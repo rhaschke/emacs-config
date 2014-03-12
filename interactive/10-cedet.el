@@ -65,9 +65,10 @@
 
 ; cedet hook for c-mode: define auto-complete sources
 (defun my-c-mode-cedet-hook ()
+  (add-to-list 'ac-sources 'ac-source-clang)
+;  (when (boundp 'ac-source-semantic)
+;	 (add-to-list 'ac-sources 'ac-source-semantic))
   ; add global/gtags, semantic as source for auto-completion (if available)
-  (when (boundp 'ac-source-semantic)
-	 (add-to-list 'ac-sources 'ac-source-semantic))
   (when (boundp 'ac-source-gtags)
 	 (add-to-list 'ac-sources 'ac-source-gtags))
   (ecb-activate))

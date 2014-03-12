@@ -82,6 +82,7 @@
 ;; add package dirs to emacs load-path
 (push "/vol/ni/share/lib/emacs/ecb" load-path)
 (push "/vol/ni/share/lib/emacs" load-path)
+(push (concat user-emacs-directory "lib") load-path)
 
 ;; load custom settings
 (setq custom-file (concat config-dir "custom.el"))
