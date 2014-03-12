@@ -2,8 +2,9 @@
 (setq TeX-force-default-mode t)
 
 ;; auto-completion
-(require 'ac-math)
-(add-to-list 'ac-modes 'LaTeX-mode)
+(when (featurep 'auto-complete-config)
+  (add-to-list 'ac-modes 'LaTeX-mode)
+  (add-to-list 'ac-modes 'latex-mode))
 
 (defun rhaschke/latex-mode-hook ()
   (flyspell-mode 1)

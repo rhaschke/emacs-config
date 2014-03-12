@@ -2,22 +2,11 @@
 
 (require 'ecb)
 
-; auto-complete mode
-; http://cx4a.org/software/auto-complete/manual.html
-(if (require 'auto-complete-config nil 'noerror)
-  (progn
-	 (add-to-list 'ac-dictionary-directories "~/.emacs.d/ac-dict")
-	 (ac-config-default)
-	 (setq ac-auto-start 3) ; auto-start completion with this number of chars
-	 (setq ac-auto-show-menu 0.8) ; delay [s] for showing completion menu
-	 (ac-flyspell-workaround)
-	 )
-  (progn 
-	 (message "auto-complete package not available")
-    ; show completions when idle
-	 (add-to-list 'semantic-default-submodes 
-					  'global-semantic-idle-completions-mode))
-)
+(unless (featurep 'auto-complete-config)
+  (message "auto-complete package not available")
+  ; show completions when idle
+  (add-to-list 'semantic-default-submodes 
+					'global-semantic-idle-completions-mode))
 
 ; allow jumping to previously visited code blocks
 (add-to-list 'semantic-default-submodes 'global-semantic-mru-bookmark-mode) 
