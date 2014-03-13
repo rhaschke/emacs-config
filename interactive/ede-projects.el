@@ -30,21 +30,6 @@
          (root-dir (concat (ede-project-root-directory prj) subdir)))
     (concat "make -C " root-dir " -j4 " target)))
 
-(defun rhaschke/get-spp-symbol-definition (item)
-  "convert item=(name . value) pair to -Dname=value"
-  (let ((name (car item))
-		  (value (cdr item)))
-	 (setq value (cond
-					  ((numberp value) (number-to-string value))
-					  ((and (stringp value) (string= value "")) nil)
-					  (t nil)))
-	 (when value (setq value (concat "=" value)))
-	 (concat "-D" name value)))
-	 
-(defun rhaschke/gen-clang-flags (&optional defines includes)
-  (append (mapcar 'rhaschke/get-spp-symbol-definition defines)
-			 (mapcar (lambda (item) (concat "-I" item)) includes)))
-
 (defun rhaschke/process-ede-compile-commands ()
   "process ede compile-command settings, applying a function to retrieve the string"
   (interactive)
@@ -61,32 +46,6 @@
 			 (setcdr lst cmd)))
 		)))
 
-(defun rhaschke/clang-flags-from-ede ()
-  "use semantic / ede settings to set clang flags"
-  (interactive)
-  (when (and (derived-mode-p 'c-mode 'c++-mode) 
-				 (boundp 'ac-clang-flags))
-	 (make-local-variable 'ac-clang-flags)
-	 (print major-mode)
-	 (print semantic-dependency-system-include-path)
-	 (print ac-clang-flags)
-
-	 (set 'ac-clang-flags
-			(append ac-clang-flags
-					  (rhaschke/gen-clang-flags nil semantic-dependency-system-include-path)))
-	 (print ac-clang-flags)
-
-	 (let ((prj (rhaschke/ede-current-project)))
-		(when prj
-		  ;; set includes for clang auto-completion
-		  (set 'ac-clang-flags 
-				 (append ac-clang-flags
-							(rhaschke/gen-clang-flags (oref prj spp-table) 
-															  (append (oref prj system-include-path)
-																		 (oref prj include-path)))))))
-	 ))
-
-(add-hook 'c-mode-common-hook (lambda () (run-at-time "0.1 sec" nil 'rhaschke/clang-flags-from-ede)))
 (add-hook 'find-file-hook 'rhaschke/process-ede-compile-commands)
 
 ;;; definitions of projects

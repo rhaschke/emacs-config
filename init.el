@@ -23,8 +23,7 @@
 (eval-when-compile
   (require 'cl))
 
-(defvar config-dir
-  (concat (getenv "HOME") "/" ".emacs.d/")
+(defvar config-dir user-emacs-directory
   "The root of the user's Emacs settings directory tree.")
 
 (defvar config-packages-dir
@@ -47,6 +46,9 @@
   "The directory containing startup files for interactive Emacs
   sessions.")
 
+(defvar config-site-dir
+  "/vol/ni/share/lib/emacs/"
+  "Directory containg site-lisp files")
 
 (defun robust-load-elisp (file)
   "load file, catching errors"
@@ -80,8 +82,8 @@
 	t))))
 
 ;; add package dirs to emacs load-path
-(push "/vol/ni/share/lib/emacs/ecb" load-path)
-(push "/vol/ni/share/lib/emacs" load-path)
+(push (concat config-site-dir "ecb") load-path)
+(push config-site-dir load-path)
 (push (concat user-emacs-directory "lib") load-path)
 
 ;; load custom settings

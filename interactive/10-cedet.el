@@ -1,8 +1,6 @@
-(add-hook 'c-mode-common-hook 'hs-minor-mode)
+;; http://alexott.net/en/writings/emacs-devenv/EmacsCedet.html
 
-(require 'ecb)
-(custom-set-variables
- '(ecb-auto-activate t))
+(add-hook 'c-mode-common-hook 'hs-minor-mode)
 
 (unless (featurep 'auto-complete-config)
   (message "auto-complete package not available")
@@ -10,22 +8,23 @@
   (add-to-list 'semantic-default-submodes 
 					'global-semantic-idle-completions-mode))
 
-; allow jumping to previously visited code blocks
-(add-to-list 'semantic-default-submodes 'global-semantic-mru-bookmark-mode) 
-; maintain tag database
-(add-to-list 'semantic-default-submodes 'global-semanticdb-minor-mode) 
-; reparse buffer when idle
-(add-to-list 'semantic-default-submodes 'global-semantic-idle-scheduler-mode) 
-; highlight current tag
-(add-to-list 'semantic-default-submodes 'global-semantic-highlight-func-mode) 
-; summarize tag at point
-(add-to-list 'semantic-default-submodes 'global-semantic-idle-summary-mode) 
+(dolist (submode 
+  '(global-semantic-mru-bookmark-mode ; navigation to previously visited tags
+	 global-semanticdb-minor-mode ; maintain tag database
+	 global-semantic-idle-scheduler-mode ; automatic parsing (+ other stuff) in idle time
+	 global-semantic-highlight-func-mode ; highlight current tag
+	 global-semantic-idle-summary-mode ; summarize tag at point
+	 global-cedet-m3-minor-mode ; activate right-mouse context menu
+	 global-semantic-idle-local-symbol-highlight-mode ; highlight local names matching current tag
+	 ))
+  (add-to-list 'semantic-default-submodes submode))
 
 ;; Activate semantic
 (semantic-mode 1)
 
 ;; submodules of semantic
 (require 'semantic/bovine/c) ; support c/c++ parsing
+(require 'semantic/bovine/clang)
 (require 'semantic/bovine/make) ; support makefile parsing
 (require 'semantic/bovine/el); support elisp parsing
 (require 'semantic/ia)       ; interactive functions for semantic analyzer
@@ -38,17 +37,15 @@
 (setq semantic-idle-breadcrumbs-format-tag-function 'semantic-format-tag-name)
 (setq semantic-idle-breadcrumbs-format-tag-list-function 'semantic-idle-breadcrumbs--format-innermost-first)
 
-; limit semantic search to these items
-(setq semanticdb-find-default-throttle '(local project unloaded system))
-
 ; allow gnu global as backend for semanticdb
 (when (and (require 'cedet-global nil 'noerror)
 			  (cedet-gnu-global-version-check t))
-  (semanticdb-enable-gnu-global-databases 'c++-mode))
+  (semanticdb-enable-gnu-global-databases 'c-mode t)
+  (semanticdb-enable-gnu-global-databases 'c++-mode t))
 
 ; potentially intersting other packages: 
-; (require 'semantic-tag-folding) ; allow folding of tags/functions
-; (require 'eassist) ; http://www.emacswiki.org/emacs/EAssist
+(require 'semantic-tag-folding) ; allow folding of tags/functions
+(require 'eassist) ; http://www.emacswiki.org/emacs/EAssist
 
 ;; add system-wide include paths
 (semantic-add-system-include "/vol/xcf/include" 'c++-mode)
@@ -59,18 +56,26 @@
 ; Qt4 settings
 (setq qt4-base-dir "/usr/include/qt4/")
 (semantic-add-system-include qt4-base-dir 'c++-mode)
-(add-to-list 'semantic-lex-c-preprocessor-symbol-file (concat qt4-base-dir "Qt/qconfig.h"))
-(add-to-list 'semantic-lex-c-preprocessor-symbol-file (concat qt4-base-dir "Qt/qconfig-dist.h"))
-(add-to-list 'semantic-lex-c-preprocessor-symbol-file (concat qt4-base-dir "Qt/qglobal.h"))
+(dolist (file '("Qt/qconfig.h" "Qt/qconfig-dist.h" "Qt/qglobal.h"))
+  (add-to-list 'semantic-lex-c-preprocessor-symbol-file (concat qt4-base-dir file)))
 
 ; cedet hook for c-mode: define auto-complete sources
 (defun my-c-mode-cedet-hook ()
-  ; use clang or semantic for auto-completion if available
-  (cond 
-	((boundp 'ac-source-clang) (add-to-list 'ac-sources 'ac-source-clang))
-	((boundp 'ac-source-semantic) (add-to-list 'ac-sources 'ac-source-semantic)))
+  ; limit semantic search to these items
+  (setq semanticdb-find-default-throttle '(local project unloaded system))
+  ; use clang as semantic source
+  (semantic-clang-activate)
+  ; set c++ auto-completion source
+  (add-to-list 'ac-sources 'ac-source-clang)
+;  (add-to-list 'ac-sources 'ac-source-semantic)
+
+  (make-local-variable 'ac-clang-flags)
+  (set 'ac-clang-flags
+		 (append ac-clang-flags 
+					(semantic-clang-args-from-project)
+					semantic-clang-system-includes))
 )
-(add-hook 'c-mode-common-hook 'my-c-mode-cedet-hook)
+(add-hook 'c-mode-common-hook 'my-c-mode-cedet-hook t)
 
 ;; customisation of modes
 (defun install-common-cedet-keys ()
@@ -93,6 +98,11 @@
 
 ;; have nice decorations by default
 (global-semantic-decoration-mode 1)
+
+;; ecb
+(require 'ecb)
+(custom-set-variables
+ '(ecb-auto-activate t))
 
 ;;; cedet.el ends here
 

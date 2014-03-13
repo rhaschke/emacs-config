@@ -23,16 +23,7 @@ int main(int argc, char *argv[])
 	a->func();
 	A* pa;
 	pa->a;
+	app.executeInGUIThread(utils::Function<void, T> f, T data)
 	float b;
 	return 0;
 }
-
-
-
-
-
-
-
-
-
-
