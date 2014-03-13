@@ -33,6 +33,7 @@
 )
 
 (add-to-list 'auto-mode-alist '("\\.hsm$" . hsm-mode))
+(push '("\\(<\\?xml.*?\\?>\\s-*\\)?<HSM" . hsm-mode) magic-mode-alist)
 
 (when (featurep 'auto-complete-config)
   (define-child-mode hsm-mode nxml-mode)

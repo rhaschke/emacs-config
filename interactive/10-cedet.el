@@ -65,12 +65,10 @@
 
 ; cedet hook for c-mode: define auto-complete sources
 (defun my-c-mode-cedet-hook ()
-  (add-to-list 'ac-sources 'ac-source-clang)
-;  (when (boundp 'ac-source-semantic)
-;	 (add-to-list 'ac-sources 'ac-source-semantic))
-  ; add global/gtags, semantic as source for auto-completion (if available)
-  (when (boundp 'ac-source-gtags)
-	 (add-to-list 'ac-sources 'ac-source-gtags))
+  ; use clang or semantic for auto-completion if available
+  (cond 
+	((boundp 'ac-source-clang) (add-to-list 'ac-sources 'ac-source-clang))
+	((boundp 'ac-source-semantic) (add-to-list 'ac-sources 'ac-source-semantic)))
   (ecb-activate))
 (add-hook 'c-mode-common-hook 'my-c-mode-cedet-hook)
 
@@ -93,29 +91,8 @@
 (add-hook 'scheme-mode-hook 'install-common-cedet-keys)
 (add-hook 'emacs-lisp-mode-hook 'install-common-cedet-keys)
 
-(defun ac-complete-self-insert (arg)
-  "inserts arg and the starts ac autocompletion using semantic source"
-  (interactive "p")
-  (self-insert-command arg) ; insert the key
-  (ac-complete-semantic) ; start auto-completion
-)
-
-(defun install-c-mode-cedet-keys ()
-  ; allow auto-completion of . or -> using semantic-source only
-  (if (fboundp 'ac-complete-semantic)
-	 (progn 
-		(local-set-key "." 'ac-complete-self-insert)
-		(local-set-key ">" 'ac-complete-self-insert))
-	 (progn 
-		(local-set-key "." 'semantic-complete-self-insert)
-		(local-set-key ">" 'semantic-complete-self-insert))))
-
-
-(add-hook 'c-mode-common-hook 'install-c-mode-cedet-keys)
-
 ;; have nice decorations by default
 (global-semantic-decoration-mode 1)
-
 
 ;;; cedet.el ends here
 

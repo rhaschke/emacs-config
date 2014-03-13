@@ -42,6 +42,10 @@
         (backward-char) (insert "\n"))
       (indent-region begin end)))
 
+(custom-set-variables
+ '(nxml-auto-insert-xml-declaration-flag nil)
+ '(nxml-slash-auto-complete-flag t))
+
 ; hide-show for nxml mode
 (add-to-list 'hs-special-modes-alist
              '(nxml-mode
