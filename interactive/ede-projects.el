@@ -45,18 +45,11 @@
   (append (mapcar 'rhaschke/get-spp-symbol-definition defines)
 			 (mapcar (lambda (item) (concat "-I" item)) includes)))
 
-(defun rhaschke/process-ede-settings ()
-  "process ede project settings
- - define compile-command from function
- - set auto-complete include dirs"
+(defun rhaschke/process-ede-compile-commands ()
+  "process ede compile-command settings, applying a function to retrieve the string"
   (interactive)
   (let ((prj (rhaschke/ede-current-project)))
-	 (when (boundp 'ac-clang-flags)
-		(set (make-local-variable 'ac-clang-flags) 
-			  (append ac-clang-flags
-						 (rhaschke/gen-clang-flags nil semantic-dependency-system-include-path))))
 	 (when prj
-		;; set compile-command from function
 		(let* ((cmd (rhaschke/ede-get-local-var prj 'compile-command))
 				 (cmd (cond
 						 ((functionp cmd) (funcall cmd))
@@ -66,15 +59,35 @@
 				 (lst (assoc 'compile-command ov)))
 		  (if (null lst) (push '(compile-command . cmd) ov)
 			 (setcdr lst cmd)))
-		;; set includes for clang auto-completion
-		(when (boundp 'ac-clang-flags)
-		  (set (make-local-variable 'ac-clang-flags) 
+		)))
+
+(defun rhaschke/clang-settings-from-ede ()
+  "use semantic / ede settings to set clang flags"
+  (interactive)
+  (when (and (derived-mode-p 'c-mode 'c++-mode) 
+				 (boundp 'ac-clang-flags))
+	 (make-local-variable 'ac-clang-flags)
+	 (print major-mode)
+	 (print semantic-dependency-system-include-path)
+	 (print ac-clang-flags)
+
+	 (set 'ac-clang-flags
+			(append ac-clang-flags
+					  (rhaschke/gen-clang-flags nil semantic-dependency-system-include-path)))
+	 (print ac-clang-flags)
+
+	 (let ((prj (rhaschke/ede-current-project)))
+		(when prj
+		  ;; set includes for clang auto-completion
+		  (set 'ac-clang-flags 
 				 (append ac-clang-flags
 							(rhaschke/gen-clang-flags (oref prj spp-table) 
 															  (append (oref prj system-include-path)
-																		 (oref prj include-path))))))
-		)))
-(add-hook 'find-file-hook 'rhaschke/process-ede-settings)
+																		 (oref prj include-path)))))))
+	 ))
+
+(add-hook 'find-file-hook 'rhaschke/clang-settings-from-ede)
+(add-hook 'find-file-hook 'rhaschke/process-ede-compile-commands)
 
 ;;; definitions of projects
 
@@ -106,7 +119,7 @@
  :file                "~/src/sfbVision/Makefile.custom"
  :include-path        '("src")
  :system-include-path '("/vol/nivision/include/icl-8.4")
- :spp-table           '(("HAVE_QT" . 1))
+ :spp-table           '(("HAVE_QT" . "1"))
  :local-variables     '((indent-tabs-mode    . nil)
 								(c-basic-offset      . 2)
 								(eval . (progn (c-set-offset 'innamespace  '+)))))
@@ -117,7 +130,7 @@
  :file                "~/src/hsm/configure.ac"
  :include-path        '("src")
  :system-include-path '()
- :spp-table           '(("HAVE_DBUS" . 1))
+ :spp-table           '(("HAVE_DBUS" . "1"))
  ;; backquote ` allows to selectively evaluate parts of a quoted list (marked with ,)
  :local-variables     '((compile-command . (lambda() (rhaschke/std-compile-cmd (concat "o." (getenv "ARCH")))))))
 
@@ -127,7 +140,7 @@
  :file                "~/src/cbf/CMakeLists.txt"
  :include-path        '("libcbf")
  :system-include-path '()
- :spp-table           '(("CBF_HAVE_XSD" . 1))
+ :spp-table           '(("CBF_HAVE_XSD" . "1"))
  ;; backquote ` allows to selectively evaluate parts of a quoted list (marked with ,)
  :spp-files           `(,(concat "o." (getenv "ARCH") "/libcbf/cbf/config.h"))
  :local-variables     '((compile-command . (lambda() (rhaschke/std-compile-cmd (concat "o." (getenv "ARCH")))))))

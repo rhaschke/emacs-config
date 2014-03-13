@@ -9,3 +9,6 @@
 
 ; https://github.com/brianjcj/auto-complete-clang
 (require 'auto-complete-clang)
+(custom-set-variables
+ '(ac-clang-flags '("-DHAVE_QT")))
+ 
