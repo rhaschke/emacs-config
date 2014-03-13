@@ -1,6 +1,8 @@
 (add-hook 'c-mode-common-hook 'hs-minor-mode)
 
 (require 'ecb)
+(custom-set-variables
+ '(ecb-auto-activate t))
 
 (unless (featurep 'auto-complete-config)
   (message "auto-complete package not available")
@@ -67,9 +69,7 @@
   (cond 
 	((boundp 'ac-source-clang) (add-to-list 'ac-sources 'ac-source-clang))
 	((boundp 'ac-source-semantic) (add-to-list 'ac-sources 'ac-source-semantic)))
-  (setq ac-sources '(ac-source-clang-async))
-  (ac-clang-launch-completion-process)
-  (ecb-activate))
+)
 (add-hook 'c-mode-common-hook 'my-c-mode-cedet-hook)
 
 ;; customisation of modes

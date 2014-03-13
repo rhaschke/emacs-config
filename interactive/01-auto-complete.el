@@ -8,13 +8,14 @@
   (ac-flyspell-workaround))
 
 ; https://github.com/brianjcj/auto-complete-clang
-;(require 'auto-complete-clang)
+(require 'auto-complete-clang)
 
 ; https://github.com/Golevka/emacs-clang-complete-async
-(require 'auto-complete-clang-async)
-(defvaralias 'ac-source-clang 'ac-source-clang-async)
-(defvaralias 'ac-clang-flags 'ac-clang-cflags)
+;(require 'auto-complete-clang-async)
+;(defvaralias 'ac-source-clang 'ac-source-clang-async)
+;(defvaralias 'ac-clang-flags 'ac-clang-cflags)
 ;(add-hook 'c-mode-common-hook 'ac-clang-launch-completion-process)
+
 (custom-set-variables
  '(ac-clang-flags '("-DHAVE_QT")))
  

@@ -86,7 +86,7 @@
 																		 (oref prj include-path)))))))
 	 ))
 
-(add-hook 'find-file-hook 'rhaschke/clang-flags-from-ede)
+(add-hook 'c-mode-common-hook (lambda () (run-at-time "0.1 sec" nil 'rhaschke/clang-flags-from-ede)))
 (add-hook 'find-file-hook 'rhaschke/process-ede-compile-commands)
 
 ;;; definitions of projects
