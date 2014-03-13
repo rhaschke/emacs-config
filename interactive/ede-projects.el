@@ -61,7 +61,7 @@
 			 (setcdr lst cmd)))
 		)))
 
-(defun rhaschke/clang-settings-from-ede ()
+(defun rhaschke/clang-flags-from-ede ()
   "use semantic / ede settings to set clang flags"
   (interactive)
   (when (and (derived-mode-p 'c-mode 'c++-mode) 
@@ -86,7 +86,7 @@
 																		 (oref prj include-path)))))))
 	 ))
 
-(add-hook 'find-file-hook 'rhaschke/clang-settings-from-ede)
+(add-hook 'find-file-hook 'rhaschke/clang-flags-from-ede)
 (add-hook 'find-file-hook 'rhaschke/process-ede-compile-commands)
 
 ;;; definitions of projects
