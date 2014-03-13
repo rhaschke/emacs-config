@@ -67,6 +67,8 @@
   (cond 
 	((boundp 'ac-source-clang) (add-to-list 'ac-sources 'ac-source-clang))
 	((boundp 'ac-source-semantic) (add-to-list 'ac-sources 'ac-source-semantic)))
+  (setq ac-sources '(ac-source-clang-async))
+  (ac-clang-launch-completion-process)
   (ecb-activate))
 (add-hook 'c-mode-common-hook 'my-c-mode-cedet-hook)
 
