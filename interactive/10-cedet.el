@@ -17,9 +17,7 @@
 ; highlight current tag
 (add-to-list 'semantic-default-submodes 'global-semantic-highlight-func-mode) 
 ; summarize tag at point
-;(add-to-list 'semantic-default-submodes 'global-semantic-idle-summary-mode) 
-; show current function in header line
-;(add-to-list 'semantic-default-submodes 'global-semantic-stickyfunc-mode) 
+(add-to-list 'semantic-default-submodes 'global-semantic-idle-summary-mode) 
 
 ;; Activate semantic
 (semantic-mode 1)
