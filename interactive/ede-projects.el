@@ -51,6 +51,10 @@
  - set auto-complete include dirs"
   (interactive)
   (let ((prj (rhaschke/ede-current-project)))
+	 (when (boundp 'ac-clang-flags)
+		(set (make-local-variable 'ac-clang-flags) 
+			  (append ac-clang-flags
+						 (rhaschke/gen-clang-flags nil semantic-dependency-system-include-path))))
 	 (when prj
 		;; set compile-command from function
 		(let* ((cmd (rhaschke/ede-get-local-var prj 'compile-command))
@@ -65,11 +69,11 @@
 		;; set includes for clang auto-completion
 		(when (boundp 'ac-clang-flags)
 		  (set (make-local-variable 'ac-clang-flags) 
-				 (rhaschke/gen-clang-flags (oref prj spp-table) 
-													(append (oref prj system-include-path)
-															  (oref prj include-path)))))
+				 (append ac-clang-flags
+							(rhaschke/gen-clang-flags (oref prj spp-table) 
+															  (append (oref prj system-include-path)
+																		 (oref prj include-path))))))
 		)))
-
 (add-hook 'find-file-hook 'rhaschke/process-ede-settings)
 
 ;;; definitions of projects
