@@ -70,9 +70,8 @@
 (defun apply-ac-clang-settings (&optional buffer)
   (interactive)
   (with-current-buffer (or buffer (current-buffer))
-	 (make-local-variable 'ac-clang-flags)
-	 (set 'ac-clang-flags
-			(append ac-clang-flags 
+	 (set 'ac-clang-cflags
+			(append ac-clang-cflags 
 					  semantic-clang-system-includes
 					  (mapprepend "-include" semantic-lex-c-preprocessor-symbol-file)
 					  (mapprepend "-I" semantic-dependency-system-include-path)

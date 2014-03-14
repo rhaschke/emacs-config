@@ -13,8 +13,6 @@
 ; https://github.com/Golevka/emacs-clang-complete-async
 ;(require 'auto-complete-clang-async)
 ;(defvaralias 'ac-source-clang 'ac-source-clang-async)
-;(defvaralias 'ac-clang-flags 'ac-clang-cflags)
 
-(custom-set-variables
- '(ac-clang-flags '("-DHAVE_QT")))
+(setq-default ac-clang-cflags '("-DHAVE_QT"))
  
