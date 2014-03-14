@@ -20,10 +20,17 @@ int main(int argc, char *argv[])
 {
 	ICLApp app(argc, argv, "");
 	shared_ptr<A> a;
-	a->func();
 	A* pa;
-	pa->a;
-	app.executeInGUIThread(utils::Function<void, T> f, T data)
 	float b;
 	return 0;
 }
+
+
+
+
+
+
+
+
+
+

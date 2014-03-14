@@ -1,11 +1,3 @@
-(defun sm-try-smerge ()
-  "Enable `smerge-mode' if the current buffer contains conflict markers."
-  (unless (derived-mode-p '(special-mode))
-    (save-excursion
-      (goto-char (point-min))
-      (when (re-search-forward "^<<<<<<< " nil t)
-	(smerge-mode 1)))))
-
 (defun other-window-backwards ()
   "Like `other-window' but visit windows in reverse order."
   (interactive)
