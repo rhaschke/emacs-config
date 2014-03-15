@@ -2,6 +2,9 @@
 (setq TeX-force-default-mode t)
 
 ;; auto-completion
+(eval-after-load "auctex"
+  '(progn (require 'ac-math)))
+
 (when (featurep 'auto-complete-config)
   (add-to-list 'ac-modes 'LaTeX-mode)
   (add-to-list 'ac-modes 'latex-mode))

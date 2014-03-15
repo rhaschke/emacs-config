@@ -115,7 +115,7 @@
 (global-semantic-decoration-mode 1)
 
 ;; ecb
-(require 'ecb)
+(require 'ecb-autoloads)
 (custom-set-variables
  '(ecb-auto-activate nil))
 

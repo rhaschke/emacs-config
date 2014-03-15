@@ -239,18 +239,19 @@ Both, nodes and events are in reverse order"
 	)
  t 'hsm-mode)
 
-(when (featurep 'ecb)
-  ;; define how the new tag classes should be displayed in ecb-methods-buffer
-  (let ((defaults (car (cdar (get 'ecb-show-tags 'standard-value))))
-		  (hsm-settings '(hsm-mode (state flattened nil)
-											(event collapsed name)
-											(t collapsed nil))))
-	 (nconc defaults (list hsm-settings)))
+(eval-after-load "ecb"
+  '(progn
+	  ;; define how the new tag classes should be displayed in ecb-methods-buffer
+	  (let ((defaults (car (cdar (get 'ecb-show-tags 'standard-value))))
+			  (hsm-settings '(hsm-mode (state flattened nil)
+												(event collapsed name)
+												(t collapsed nil))))
+		 (nconc defaults (list hsm-settings)))
 
-  (let ((defaults (car (cdar (get 'ecb-tag-display-function 'standard-value))))
-		  (hsm-settings '(hsm-mode . ecb-format-tag-summarize)))
-	 (nconc defaults (list hsm-settings)))
-)
+	  (let ((defaults (car (cdar (get 'ecb-tag-display-function 'standard-value))))
+			  (hsm-settings '(hsm-mode . ecb-format-tag-summarize)))
+		 (nconc defaults (list hsm-settings)))
+	  ))
 
 ;; define faces for states and events
 (nconc semantic-format-face-alist '((state . font-lock-function-name-face)

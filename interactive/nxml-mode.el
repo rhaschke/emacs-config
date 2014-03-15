@@ -1,24 +1,3 @@
-;; emacs-lisp
-(defun rhaschke/elisp-mode-hook ()
-  (eldoc-mode 1))
-(add-hook 'emacs-lisp-mode-hook 'rhaschke/elisp-mode-hook)
-
-;;; Drupal mode
-(defun drupal-mode ()
-  (require 'php-mode)
-  (interactive)
-  (php-mode)
-  (setq c-basic-offset 3)
-  (setq indent-tabs-mode nil)
-  (setq fill-column 78)
-  (c-set-offset 'case-label 2)
-  (c-set-offset 'arglist-close 0)
-  (c-set-offset 'arglist-intro 2))
-
-(add-to-list 'auto-mode-alist '("/drupal.*\\.\\(php\\|module\\|inc\\|test\\|install\\)$" . drupal-mode))
-(add-to-list 'auto-mode-alist '("/drupal.*\\.info" . conf-windows-mode))
-
-
 ;; nxml-mode
 (add-to-list 'auto-mode-alist '("\\.me$"  . nxml-mode))
 
@@ -55,28 +34,16 @@
                nxml-forward-element
                nil))
 
+(eval-after-load "nxml-mode"
+  '(progn 
+	  (require 'semantic/bovine/xml)
+	  (require 'auto-complete-nxml)))
+
 ; enable auto-completion in nxml
 (add-to-list 'ac-modes 'nxml-mode)
+
 (defun rhaschke/nxml-mode-hook ()
   (hs-minor-mode))
+  
 (add-hook 'nxml-mode-hook 'rhaschke/nxml-mode-hook)
 
-;; google protocol buffer mode
-(add-to-list 'auto-mode-alist '("\\.proto\\'" . protobuf-mode))
-
-;; Helge's txf files
-(add-to-list 'auto-mode-alist '("\\.txf$" . org-mode))
-
-(defun rhaschke/org-mode-hook ()
-  (if (and (buffer-file-name)
-				 (string= "txf" (file-name-extension (buffer-file-name))))
-		  (setq outline-regexp "[+\f]+"))
-  (require 'org-exp-bibtex))
-(add-hook 'org-mode-hook 'rhaschke/org-mode-hook)
-
-;; octave mode
-(defun rhaschke/octave-mode-hook ()
-  (local-set-key [f9] 'octave-send-region))
-(add-hook 'octave-mode-hook 'rhaschke/octave-mode-hook)
-;; auto-associate .m files
-(add-to-list 'auto-mode-alist '("\\.m$" . octave-mode))

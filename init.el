@@ -82,10 +82,12 @@
 	t))))
 
 ;; add package dirs to emacs load-path
-(push (concat config-site-dir "ecb") load-path)
-(push config-site-dir load-path)
-(push (concat user-emacs-directory "lib") load-path)
-
+(dolist (dir (list config-site-dir
+					(concat config-site-dir "ecb")
+					(concat config-site-dir "org-mode/lisp")
+					(concat user-emacs-directory "lib")))
+  (when (file-exists-p dir) (push dir load-path)))
+				  
 ;; load custom settings
 (setq custom-file (concat config-dir "custom.el"))
 

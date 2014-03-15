@@ -187,17 +187,19 @@ function `semantic-install-function-overrides'."
 	)
  t 'nxml-mode)
 
-(require 'ecb)
-;; define how the new tag classes should be displayed in ecb-methods-buffer
-(let ((defaults (car (cdar (get 'ecb-show-tags 'standard-value))))
-		(nxml-settings '(nxml-mode (element flattened nil)
-											(attribute hidden nil)
-											(include collapsed nil))))
-  (nconc defaults (list nxml-settings)))
-
-(let ((defaults (car (cdar (get 'ecb-tag-display-function 'standard-value))))
-		(nxml-settings '(nxml-mode . ecb-format-tag-summarize)))
-  (nconc defaults (list nxml-settings)))
+(eval-after-load "ecb"
+  '(progn
+	  ;; define how the new tag classes should be displayed in ecb-methods-buffer
+	  (let ((defaults (car (cdar (get 'ecb-show-tags 'standard-value))))
+			  (nxml-settings '(nxml-mode (element flattened nil)
+												  (attribute hidden nil)
+												  (include collapsed nil))))
+		 (nconc defaults (list nxml-settings)))
+	  
+	  (let ((defaults (car (cdar (get 'ecb-tag-display-function 'standard-value))))
+			  (nxml-settings '(nxml-mode . ecb-format-tag-summarize)))
+		 (nconc defaults (list nxml-settings)))
+	  ))
 
 ;; define faces for elements and attributes
 (nconc semantic-format-face-alist '((element . font-lock-function-name-face)
