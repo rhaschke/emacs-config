@@ -23,8 +23,9 @@
 (eval-when-compile
   (require 'cl))
 
-(defvar config-dir user-emacs-directory
+(defvar config-dir (file-name-directory user-init-file)
   "The root of the user's Emacs settings directory tree.")
+(print config-dir)
 
 (defvar config-packages-dir
   "packages/"
@@ -85,11 +86,11 @@
 (dolist (dir (list config-site-dir
 					(concat config-site-dir "ecb")
 					(concat config-site-dir "org-mode/lisp")
-					(concat user-emacs-directory "lib")))
+					(concat config-dir "lib")))
   (when (file-exists-p dir) (push dir load-path)))
 				  
 ;; load custom settings
-(setq custom-file (concat config-dir "custom.el"))
+(setq custom-file (concat user-emacs-directory "custom.el"))
 
 
 ;;; First we load version-specific stuff, packages and some other stuff.
@@ -107,10 +108,10 @@
 (load-user-elisp-directory config-common-dir)
 
 
-;;; Now packages and everything should be in place. So we can load
-;; customizations.
-;;
-
+;;; Now packages and everything should be in place. So we can load customizations.
+;;  first load customizations from .emacs.d/custom.el from init dir (option -u)
+(robust-load-elisp (concat config-dir "custom.el"))
+;;  and try also the one of the local user
 (robust-load-elisp custom-file)
 
 
