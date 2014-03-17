@@ -4,10 +4,6 @@
 
 using namespace boost;
 
-/** function doing stuff */
-void func1(int a, double d, std::string sName) {
-}
-
 struct A {
 	void func() {}
 	void func(int a, int b) {}
