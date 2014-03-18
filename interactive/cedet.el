@@ -1,4 +1,5 @@
 ;; http://alexott.net/en/writings/emacs-devenv/EmacsCedet.html
+;; https://github.com/randomphrase/dotfiles/wiki/Creating-a-C---Development-Environment
 ;; https://sites.google.com/site/taubkfet/tutorials/settingupac11developmentenvironmentonlinuxwithclangandemacs
 
 (add-hook 'c-mode-common-hook 'hs-minor-mode)
@@ -82,15 +83,15 @@
 		(ac-clang-launch-completion-process))))
   
 ;; cedet hook for c-mode: define auto-complete sources
-(defun my-c-mode-cedet-hook ()
+(defun rhaschke/c-mode-cedet-hook ()
   ;; limit semantic search to these items
   (setq semanticdb-find-default-throttle '(local project unloaded system))
   ;; set c++ auto-completion source
   (add-to-list 'ac-sources 'ac-source-clang)
   ; (add-to-list 'ac-sources 'ac-source-semantic)
-  (run-at-time "0.1 sec" nil 'apply-ac-clang-settings (current-buffer))
 )
-(add-hook 'c-mode-common-hook 'my-c-mode-cedet-hook t)
+(add-hook 'c-mode-common-hook 'rhaschke/c-mode-cedet-hook t)
+(add-hook 'ede-minor-mode-hook 'apply-ac-clang-settings)
 
 ;; customisation of modes
 (defun install-common-cedet-keys ()
@@ -118,8 +119,7 @@
 (require 'ecb-autoloads)
 (custom-set-variables
  '(ecb-auto-activate nil))
-;; activate ecb in c-modes
-(add-hook 'c-mode-common-hook 'ecb-activate)
+;; activate ecb in c-modes (has some strange side effects)
+;(add-hook 'c-mode-common-hook 'ecb-activate)
 
 ;;; cedet.el ends here
-
