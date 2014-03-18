@@ -1,8 +1,10 @@
+;; set some styles based on the mode
 (setq c-default-style
 		'((java-mode . "java")
 		  (awk-mode . "awk")
 		  (other . "linux")))
 
+;; these are my default style settings (style user)
 (setq c-basic-offset 3)
 (dolist (name '(case-label 
 					 innamespace 
@@ -10,10 +12,8 @@
   (c-set-offset name 0))
 
 (defvar rsc-style
-  '("rsc"
-    (c-basic-offset             . 4)
+  '((c-basic-offset             . 4)
     (c-comment-only-line-offset . 0)
-
     (c-offsets-alist
      (statement-block-intro . +)
      (substatement-open     . 0)
@@ -25,9 +25,6 @@
      (namespace-open        . 0)
      (innamespace           . 0))))
 
-(unless (find "rsc" c-style-alist
-	      :key  #'car
-	      :test #'string=)
-  (push rsc-style c-style-alist))
+(c-add-style "rsc" rsc-style)
 
 (add-to-list 'auto-mode-alist '("\\.h\\'" . c++-mode))

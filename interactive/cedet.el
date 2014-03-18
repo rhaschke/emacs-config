@@ -118,6 +118,8 @@
 (require 'ecb-autoloads)
 (custom-set-variables
  '(ecb-auto-activate nil))
+;; activate ecb in c-modes
+(add-hook 'c-mode-common-hook 'ecb-activate)
 
 ;;; cedet.el ends here
 
