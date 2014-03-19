@@ -1,4 +1,4 @@
-;;; list-processes+.el --- Add process management to `list-processes'
+;;; list-processes.el --- Add process management to `list-processes'
 
 ;; Copyright 2006 Ye Wenbin
 ;;
@@ -31,20 +31,22 @@
 (eval-when-compile
   (require 'cl))
 
+(defalias 'list-processes-orig (symbol-function 'list-processes))
+
 (defvar list-processes-mode-map
   (let ((map (make-sparse-keymap)))
     (define-key map "\C-k" 'list-processes-kill-process)
     (define-key map "\C-m" 'list-processes-goto-buffer)
-    (define-key map "g" 'list-processes+)
+    (define-key map "g" 'list-processes)
     (define-key map "s" 'list-processes-sort)
     map)
   "")
 
 ;;;###autoload
-(defun list-processes+ (&optional query-only)
+(defun list-processes (&optional query-only)
   ""
   (interactive "P")
-  (list-processes query-only)
+  (list-processes-orig query-only)
   (let ((procs (process-list))
         (inhibit-read-only t))
     (if query-only
@@ -82,7 +84,7 @@
     (when (and proc
                (y-or-n-p (format "Kill process %s? " (process-name proc))))
       (delete-process proc)
-      (list-processes+))))
+      (list-processes))))
 
 (defun list-processes-goto-buffer ()
   ""
@@ -94,6 +96,6 @@
           (switch-to-buffer (process-buffer proc))
         (message "No associate buffer!")))))
 
-(provide 'list-processes+)
+(provide 'list-processes)
 
 ;;; list-process-mode.el ends here
