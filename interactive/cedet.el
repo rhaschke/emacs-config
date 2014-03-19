@@ -46,7 +46,7 @@
   (semanticdb-enable-gnu-global-databases 'c++-mode t))
 
 ;; potentially intersting other packages: 
-(require 'semantic-tag-folding) ; allow folding of tags/functions
+;;(require 'semantic-tag-folding) ; folding of tags with fringe symbol
 (require 'eassist) ; http://www.emacswiki.org/emacs/EAssist
 
 ;; add system-wide include paths
