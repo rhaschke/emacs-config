@@ -13,3 +13,12 @@ If FRAME is nil, apply to current frame."
   (interactive)
   (set-frame-parameter frame 'fullscreen
 		       (if (fullscreen-p frame) nil 'fullboth)))
+
+(defun count-words (start end)
+    "Print number of words in the region."
+    (interactive "r")
+    (save-excursion
+      (save-restriction
+        (narrow-to-region start end)
+        (goto-char (point-min))
+        (message "words: %d" (count-matches "\\sw+")))))
