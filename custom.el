@@ -16,7 +16,9 @@
 										 ((ispell-dictionary . "british") 
 										  (ispell-dictionary . "de_DE")
 										  (ispell-dictionary . "american"))))
- '(show-paren-mode t))
+ '(show-paren-mode t)
+ '(scroll-bar-mode 'right))
+
 (custom-set-faces
   ;; custom-set-faces was added by Custom.
   ;; If you edit it by hand, you could mess it up, so be careful.
