@@ -6,6 +6,7 @@
  '(browse-url-generic-program "chromium-browser" t)
  '(column-number-mode t)
  '(delete-selection-mode nil nil (delsel))
+ '(ecb-auto-activate nil)
  '(ecb-layout-name "left3")
  '(ecb-options-version "2.40")
  '(ecb-primary-secondary-mouse-buttons (quote mouse-1--C-mouse-1))
@@ -17,8 +18,9 @@
 										  (ispell-dictionary . "de_DE")
 										  (ispell-dictionary . "american"))))
  '(show-paren-mode t)
- '(scroll-bar-mode 'right))
-
+ '(scroll-bar-mode 'right)
+ '(nxml-auto-insert-xml-declaration-flag nil)
+ '(nxml-slash-auto-complete-flag t))
 (custom-set-faces
   ;; custom-set-faces was added by Custom.
   ;; If you edit it by hand, you could mess it up, so be careful.
