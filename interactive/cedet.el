@@ -19,14 +19,14 @@
 	 global-cedet-m3-minor-mode ; activate right-mouse context menu
 	 global-semantic-idle-local-symbol-highlight-mode ; highlight local names matching current tag
 	 ))
-  (add-to-list 'semantic-default-submodes submode))
+  (when (featurep submode) (add-to-list 'semantic-default-submodes submode)))
 
 ;; Activate semantic
 (semantic-mode 1)
 
 ;; submodules of semantic
 (require 'semantic/bovine/c) ; support c/c++ parsing
-(require 'semantic/bovine/clang)
+(require 'semantic/bovine/clang nil 'noerror) ; employ clang for parsing
 (require 'semantic/bovine/make) ; support makefile parsing
 (require 'semantic/bovine/el); support elisp parsing
 (require 'semantic/ia)       ; interactive functions for semantic analyzer
@@ -47,7 +47,7 @@
 
 ;; potentially intersting other packages: 
 ;;(require 'semantic-tag-folding) ; folding of tags with fringe symbol
-(require 'eassist) ; http://www.emacswiki.org/emacs/EAssist
+(require 'eassist nil 'noerror) ; http://www.emacswiki.org/emacs/EAssist
 
 ;; add system-wide include paths
 (semantic-add-system-include "/vol/xcf/include" 'c++-mode)
@@ -62,26 +62,9 @@
   (add-to-list 'semantic-lex-c-preprocessor-symbol-file (concat qt4-base-dir file)))
 
 ;; use clang as semantic source
-(semantic-clang-activate)
+(when (featurep 'semantic-clang-activate)
+  (semantic-clang-activate))
 
-(defun mapprepend (prefix list)
-  "prepend every string in list with prefix"
-  (mapcar (lambda (x) (concat prefix x)) list))
-
-(defun apply-ac-clang-settings (&optional buffer)
-  (interactive)
-  (with-current-buffer (or buffer (current-buffer))
-	 (set 'ac-clang-cflags
-			(append ac-clang-cflags 
-					  semantic-clang-system-includes
-					  (mapprepend "-include" semantic-lex-c-preprocessor-symbol-file)
-					  (mapprepend "-I" semantic-dependency-system-include-path)
-					  (semantic-clang-args-from-project)
-					  semantic-clang-arguments))
-	 
-	 (when (fboundp 'ac-clang-launch-completion-process)
-		(ac-clang-launch-completion-process))))
-  
 ;; cedet hook for c-mode: define auto-complete sources
 (defun rhaschke/c-mode-cedet-hook ()
   ;; limit semantic search to these items
@@ -91,7 +74,6 @@
   ; (add-to-list 'ac-sources 'ac-source-semantic)
 )
 (add-hook 'c-mode-common-hook 'rhaschke/c-mode-cedet-hook t)
-(add-hook 'ede-minor-mode-hook 'apply-ac-clang-settings)
 
 ;; customisation of modes
 (defun install-common-cedet-keys ()

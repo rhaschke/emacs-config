@@ -1,10 +1,6 @@
 ;; nxml-mode
 (add-to-list 'auto-mode-alist '("\\.me$"  . nxml-mode))
-
-(require 'rnc-mode)
 (add-to-list 'auto-mode-alist '("\\.rnc$" . rnc-mode))
-
-(require 'rng-loc)
 (add-to-list 'rng-schema-locating-files "/vol/nirobots/share/schemas.xml")
 
 (defun bf-pretty-print-xml-region (begin end)

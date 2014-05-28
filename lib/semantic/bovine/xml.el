@@ -30,12 +30,6 @@
 ;;; Code:
 ;;
 
-(require 'cl)
-(defalias 'cl-gensym 'gensym)
-(defalias 'cl-dolist 'dolist)
-(defalias 'cl-return 'return)
-(defalias 'cl-case 'case)
-
 (require 'semantic/tag)
 (require 'semantic/format)
 (require 'nxml-mode)
@@ -53,9 +47,9 @@ to successive attribute names and values of the current tag (via
 `xmltok-attributes') and execute BODY for each binding."
   (let ((name   (first name-value))
 		  (value  (second name-value))
-		  (start  (or (third name-value) (cl-gensym)))
-		  (end    (or (fourth name-value) (cl-gensym)))
-		  (attrib (cl-gensym)))
+		  (start  (or (third name-value) (gensym)))
+		  (end    (or (fourth name-value) (gensym)))
+		  (attrib (gensym)))
     `(dolist (,attrib xmltok-attributes)
        (let ((,name  (xmltok-attribute-local-name ,attrib))
 				 (,value (xmltok-attribute-value ,attrib))
@@ -66,7 +60,7 @@ to successive attribute names and values of the current tag (via
 (defun semantic-nxml--find-href ()
   (semantic-nxml--doattribs (name value)
 									 (when (string= name "href")
-										(cl-return value))))
+										(return value))))
 
 (defun semantic-nxml-parse-region (start end &rest ignore)
   "Parse the current nxml buffer for semantic tags.
@@ -243,7 +237,6 @@ function `semantic-install-function-overrides'."
 		     (semantic-find-tag-by-overlay))))
     ;; Display the tags.
     (funcall semantic-idle-breadcrumbs-display-function tag-list)))
-
 
 (provide 'semantic/bovine/xml)
 
