@@ -4,6 +4,6 @@
 	 (add-to-list 'load-path (concat config-site-dir "git-modes/"))
 	 (add-to-list 'load-path magit-dir)
 	 (eval-after-load 'info
-		'(progn (info-initialize)
-				  (add-to-list 'Info-directory-list magit-dir)))
+		`(progn (info-initialize)
+				  (add-to-list 'Info-directory-list ,magit-dir)))
 	 (load-file f)))
