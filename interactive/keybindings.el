@@ -37,8 +37,8 @@
 
 (global-set-key [f8]    'next-error)
 (global-set-key [f9]    'compile)
-(global-set-key [f10]   'save-buffers-kill-terminal)
 (global-set-key [f11]   'toggle-fullscreen)
+(global-set-key [f12]   'save-buffers-kill-terminal)
 
 (global-set-key "\C-v"   'x-clipboard-yank)
 
