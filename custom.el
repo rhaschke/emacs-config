@@ -15,7 +15,7 @@
  '(mouse-drag-copy-region t)
  '(nxml-auto-insert-xml-declaration-flag nil)
  '(nxml-slash-auto-complete-flag t)
- '(safe-local-variable-values (quote ((c-file-offsets (substatement-open . 0)) (ispell-dictionary . "british") (ispell-dictionary . "de_DE") (ispell-dictionary . "american"))))
+ '(safe-local-variable-values (quote ((eval progn (c-set-offset (quote innamespace) (quote +))) (c-file-offsets (substatement-open . 0)) (ispell-dictionary . "british") (ispell-dictionary . "de_DE") (ispell-dictionary . "american"))))
  '(scroll-bar-mode (quote right))
  '(show-paren-mode t))
 (custom-set-faces
