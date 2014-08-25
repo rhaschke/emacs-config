@@ -1,7 +1,6 @@
 ;; nxml-mode
 (add-to-list 'auto-mode-alist '("\\.me$"  . nxml-mode))
 (add-to-list 'auto-mode-alist '("\\.rnc$" . rnc-mode))
-(add-to-list 'rng-schema-locating-files "/vol/nirobots/share/schemas.xml")
 
 (defun bf-pretty-print-xml-region (begin end)
   "Pretty format XML markup in region. You need to have nxml-mode
@@ -34,6 +33,8 @@
   '(progn 
 	  (require 'semantic/bovine/xml)
 	  (require 'auto-complete-nxml)))
+(eval-after-load "rng-valid"
+  '(add-to-list 'rng-schema-locating-files "/vol/nirobots/share/schemas.xml"))
 
 ; enable auto-completion in nxml
 (add-to-list 'ac-modes 'nxml-mode)
