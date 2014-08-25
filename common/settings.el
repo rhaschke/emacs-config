@@ -7,7 +7,3 @@
 ;(setq mouse-scroll-delay 50) ;; slower mouse scrolling
 (setq-default word-wrap t) ;; wrap long lines at word boundaries
 
-;;; indentation
-(setq-default standard-indent 3)
-(setq-default tab-width standard-indent)
-(setq-default indent-tabs-mode t) ;; insert tabs to indent
