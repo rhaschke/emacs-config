@@ -86,7 +86,9 @@
 (dolist (dir (list config-site-dir
 					(concat config-site-dir "ecb")
 					(concat config-site-dir "org-mode/lisp")
-					(concat config-dir "lib")))
+					(concat config-site-dir (format "emacs%d" emacs-major-version))
+					(concat config-dir "lib")
+					))
   (when (file-exists-p dir) (push dir load-path)))
 				  
 ;; load custom settings
