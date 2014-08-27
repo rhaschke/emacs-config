@@ -18,8 +18,9 @@
 (setq-default tab-width 4)
 
 (c-add-style "cc-mode" 
-  '("linux"
+  `("linux"
 	 (c-basic-offset  . 3)
+	 (tab-width       . ,c-basic-offset)
 	 (c-offsets-alist 
 	  (case-label   . 0)
 	  (innamespace  . 0)
