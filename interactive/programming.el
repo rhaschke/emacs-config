@@ -10,7 +10,6 @@
   (php-mode)
   (setq c-basic-offset 3)
   (setq indent-tabs-mode nil)
-  (setq fill-column 78)
   (c-set-offset 'case-label 2)
   (c-set-offset 'arglist-close 0)
   (c-set-offset 'arglist-intro 2))

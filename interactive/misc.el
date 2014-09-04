@@ -22,3 +22,10 @@ If FRAME is nil, apply to current frame."
         (narrow-to-region start end)
         (goto-char (point-min))
         (message "words: %d" (count-matches "\\sw+")))))
+
+(defun normalize-whitespace (start end)
+  "remove trailing whitespace, remove empty lines at end of document"
+  (interactive "r")
+  (save-excursion
+	(indent-region start end))
+  (delete-trailing-whitespace))

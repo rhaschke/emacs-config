@@ -40,9 +40,9 @@
 (global-set-key [f11]   'toggle-fullscreen)
 (global-set-key [f12]   'save-buffers-kill-terminal)
 
-(global-set-key "\C-v"   'x-clipboard-yank)
+(global-set-key "\C-v"  'x-clipboard-yank)
 
 (global-set-key [home]  'beginning-of-visual-line)
 (global-set-key [end]   'end-of-visual-line)
 
-
+(global-set-key [f10]   'magit-status)

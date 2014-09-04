@@ -1,3 +1,5 @@
+;;; default line width
+(setq-default fill-column 100)
 ;;; indentation
 (setq-default standard-indent 3)
 (setq-default tab-width standard-indent)

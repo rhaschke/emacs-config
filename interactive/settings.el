@@ -15,7 +15,8 @@
 (defun rhaschke/common-text-mode-hook ()
   "function added to all text modes"
   (smerge-start-session)
-  (goto-address-mode))
+  (goto-address-mode)
+  (whitespace-mode))
 
 (add-hook 'text-mode-hook 'rhaschke/common-text-mode-hook)
 (add-hook 'emacs-lisp-mode-hook 'rhaschke/common-text-mode-hook)
@@ -24,3 +25,9 @@
 
 ;; turn off abbrev-mode
 (abbrev-mode 0)
+
+;; configure whitespace mode
+(custom-set-variables
+ '(whitespace-style '(face tabs tab-mark space-before-tab empty)))
+(custom-set-faces
+ '(whitespace-tab ((t (:background "white smoke" :foreground "lightgray")))))
