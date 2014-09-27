@@ -2,6 +2,7 @@
 (setq-default fill-column 100)
 ;;; indentation
 (setq-default standard-indent 3)
+(setq c-basic-offset standard-indent)
 (setq-default tab-width standard-indent)
 (setq-default indent-tabs-mode t) ;; insert tabs to indent
 
@@ -9,15 +10,15 @@
 (require 'smart-tabs-mode)
 (smart-tabs-insinuate 'c 'c++ 'java 'javascript 'cperl 'python 'ruby 'nxml)
 
+;; guess c-basic-offset and indent-tabs-mode: https://github.com/jscheid/dtrt-indent
+(require 'dtrt-indent)
+(dtrt-indent-mode 1)
+
 ;; set some styles based on the mode
 (setq c-default-style
 		'((java-mode . "java")
 		  (awk-mode . "awk")
 		  (other . "cc-mode")))
-
-;; these are my default style settings
-(setq c-basic-offset 3)
-(setq-default tab-width 4)
 
 (c-add-style "cc-mode" 
   `("linux"

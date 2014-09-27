@@ -22,6 +22,7 @@
 (add-hook 'emacs-lisp-mode-hook 'rhaschke/common-text-mode-hook)
 (add-hook 'c-mode-common-hook 'rhaschke/common-text-mode-hook)
 (add-hook 'python-mode-hook 'rhaschke/common-text-mode-hook)
+(add-hook 'cmake-mode-hook 'rhaschke/common-text-mode-hook)
 
 ;; turn off abbrev-mode
 (abbrev-mode 0)
