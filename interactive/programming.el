@@ -19,7 +19,7 @@
 
 
 ;;; google protocol buffer mode
-(add-to-list 'auto-mode-alist '("\\.proto\\'" . protobuf-mode))
+(add-to-list 'auto-mode-alist '("\\.proto" . protobuf-mode))
 
 
 ;;; octave mode
@@ -28,3 +28,8 @@
 (add-hook 'octave-mode-hook 'rhaschke/octave-mode-hook)
 ;; auto-associate .m files
 (add-to-list 'auto-mode-alist '("\\.m$" . octave-mode))
+
+
+;; load json-mode on request
+(add-to-list 'auto-mode-alist '("\\.\\(project\\|distribution\\|template\\)" . json-mode))
+(autoload 'json-mode "json-mode" "JSON mode" t)
