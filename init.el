@@ -56,7 +56,7 @@
   (condition-case condition
     (load file)
     (error (let ((error-message (format "Errors loading %s: %s" file condition))
-		 (comment-start (or comment-start "; ")))
+       (comment-start (or comment-start "; ")))
              (message error-message)
              (with-current-buffer "*scratch*"
                (goto-char (point-max))
@@ -66,9 +66,9 @@
 (defun load-user-elisp (file)
   "load file, given as basename"
   (let ((absolute-file 
-	 (if (file-name-absolute-p file) file (concat config-dir file))))
+    (if (file-name-absolute-p file) file (concat config-dir file))))
     (when (or (file-readable-p (concat absolute-file ".el"))
-	      (file-readable-p (concat absolute-file ".elc")))
+         (file-readable-p (concat absolute-file ".elc")))
       (robust-load-elisp absolute-file))))
 
 (defun load-user-elisp-directory (directory &optional basedir)
@@ -76,28 +76,28 @@
   (let ((absolute-directory (concat (or basedir config-dir) directory)))
     (when (file-accessible-directory-p absolute-directory)
       (progn
-	(message "Loading files in directory %s..." absolute-directory)
-	(dolist (file (directory-files absolute-directory t "^[^.].*\\.el$"))
-	  (robust-load-elisp (substring file 0 -3)))
-	(message "Loading files in directory %s...done" absolute-directory)
-	t))))
+   (message "Loading files in directory %s..." absolute-directory)
+   (dolist (file (directory-files absolute-directory t "^[^.].*\\.el$"))
+     (robust-load-elisp (substring file 0 -3)))
+   (message "Loading files in directory %s...done" absolute-directory)
+   t))))
 
 ;; add package dirs to emacs load-path
 (dolist (dir (list config-site-dir
-					(concat config-site-dir "ecb")
-					(concat config-site-dir "org-mode/lisp")
-					(concat config-site-dir (format "emacs%d" emacs-major-version))
-					(concat config-dir "lib")
-					))
+               (concat config-site-dir "ecb")
+               (concat config-site-dir "org-mode/lisp")
+               (concat config-site-dir (format "emacs%d" emacs-major-version))
+               (concat config-dir "lib")
+               ))
   (when (file-exists-p dir) (push dir load-path)))
 
 ;; add all subdirs of lib to load-path
 (let* ((libdir (concat config-dir "lib"))
-		 (files (directory-files libdir t "^[^.].*")))
+       (files (directory-files libdir t "^[^.].*")))
   (dolist (file files)
-	 (and (file-directory-p file)
-			(not (member file '("RCS" "CVS" "rcs" "cvs" "semantic")))
-			(push file load-path))))
+    (and (file-directory-p file)
+         (not (member file '("RCS" "CVS" "rcs" "cvs" "semantic")))
+         (push file load-path))))
 
 ;; load custom settings
 (setq custom-file (concat user-emacs-directory "custom.el"))

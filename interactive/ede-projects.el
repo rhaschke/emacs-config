@@ -5,24 +5,24 @@
 (defun rhaschke/ede-current-project (&optional buffer-or-filename)
   "fetch ede project from argument"
   (let* ((filename (cond 
-						 ; arg is buffer
-						 ((bufferp buffer-or-filename) 
-						  (or (buffer-file-name buffer-or-filename) default-directory))
-						 ; arg is string: interprete as filename
-						 ((and (stringp buffer-or-filename)
-								 (file-exists-p buffer-or-filename))
-						  buffer-or-filename)
-						 ; arg is something else: use filename of current-buffer
-						 (t (or (buffer-file-name (current-buffer)) default-directory))))
-			(dir (file-name-directory filename)))
-	 (ede-current-project dir)))
+                   ; arg is buffer
+                   ((bufferp buffer-or-filename) 
+                    (or (buffer-file-name buffer-or-filename) default-directory))
+                   ; arg is string: interprete as filename
+                   ((and (stringp buffer-or-filename)
+                         (file-exists-p buffer-or-filename))
+                    buffer-or-filename)
+                   ; arg is something else: use filename of current-buffer
+                   (t (or (buffer-file-name (current-buffer)) default-directory))))
+         (dir (file-name-directory filename)))
+    (ede-current-project dir)))
 
 (defun rhaschke/ede-get-local-var (prj var)
   "fetch given variable var from :local-variables of project"
   (when prj
-	 (let* ((ov (oref prj local-variables))
-			  (lst (assoc var ov)))
-		(when lst (cdr lst)))))
+    (let* ((ov (oref prj local-variables))
+           (lst (assoc var ov)))
+      (when lst (cdr lst)))))
 
 (defun rhaschke/std-compile-cmd (&optional subdir target)
   "Generates compile string for compiling CMake project in debug mode"
@@ -34,17 +34,17 @@
   "process ede compile-command settings, applying a function to retrieve the string"
   (interactive)
   (let ((prj (rhaschke/ede-current-project)))
-	 (when prj
-		(let* ((cmd (rhaschke/ede-get-local-var prj 'compile-command))
-				 (cmd (cond
-						 ((functionp cmd) (funcall cmd))
-						 ((stringp cmd) cmd)
-						 (t (rhaschke/std-compile-cmd))))
-				 (ov (oref prj local-variables))
-				 (lst (assoc 'compile-command ov)))
-		  (if (null lst) (push '(compile-command . cmd) ov)
-			 (setcdr lst cmd)))
-		)))
+    (when prj
+      (let* ((cmd (rhaschke/ede-get-local-var prj 'compile-command))
+             (cmd (cond
+                   ((functionp cmd) (funcall cmd))
+                   ((stringp cmd) cmd)
+                   (t (rhaschke/std-compile-cmd))))
+             (ov (oref prj local-variables))
+             (lst (assoc 'compile-command ov)))
+        (if (null lst) (push '(compile-command . cmd) ov)
+          (setcdr lst cmd)))
+      )))
 
 (add-hook 'find-file-hook 'rhaschke/process-ede-compile-commands)
 
@@ -59,7 +59,7 @@
  :spp-table           '()
  :local-variables     '((indent-tabs-mode    . t)
                         (c-indentation-style . "linux")
-								(compile-command . (lambda() (rhaschke/std-compile-cmd nil "all")))))
+                        (compile-command . (lambda() (rhaschke/std-compile-cmd nil "all")))))
 
 (ede-cpp-root-project
  "nst"
@@ -70,7 +70,7 @@
  :spp-table           '()
  :local-variables     '((indent-tabs-mode    . t)
                         (c-indentation-style . "linux")
-								(compile-command . (lambda() (rhaschke/std-compile-cmd nil "all")))))
+                        (compile-command . (lambda() (rhaschke/std-compile-cmd nil "all")))))
 
 (ede-cpp-root-project
  "sfbVision"
@@ -80,8 +80,8 @@
  :system-include-path '("/vol/nivision/include/icl-8.4")
  :spp-table           '(("HAVE_QT" . "1"))
  :local-variables     '((indent-tabs-mode    . nil)
-								(c-basic-offset      . 2)
-								(eval . (progn (c-set-offset 'innamespace  '+)))))
+                        (c-basic-offset      . 2)
+                        (eval . (progn (c-set-offset 'innamespace  '+)))))
 
 (ede-cpp-root-project
  "hsm"

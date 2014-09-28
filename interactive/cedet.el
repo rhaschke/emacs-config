@@ -8,17 +8,17 @@
   (message "auto-complete package not available")
   ; show completions when idle
   (add-to-list 'semantic-default-submodes 
-					'global-semantic-idle-completions-mode))
+               'global-semantic-idle-completions-mode))
 
 (dolist (submode 
   '(global-semantic-mru-bookmark-mode ; navigation to previously visited tags
-	 global-semanticdb-minor-mode ; maintain tag database
-	 global-semantic-idle-scheduler-mode ; automatic parsing (+ other stuff) in idle time
-	 global-semantic-highlight-func-mode ; highlight current tag
-	 global-semantic-idle-summary-mode ; summarize tag at point
-	 global-cedet-m3-minor-mode ; activate right-mouse context menu
-	 global-semantic-idle-local-symbol-highlight-mode ; highlight local names matching current tag
-	 ))
+    global-semanticdb-minor-mode ; maintain tag database
+    global-semantic-idle-scheduler-mode ; automatic parsing (+ other stuff) in idle time
+    global-semantic-highlight-func-mode ; highlight current tag
+    global-semantic-idle-summary-mode ; summarize tag at point
+    global-cedet-m3-minor-mode ; activate right-mouse context menu
+    global-semantic-idle-local-symbol-highlight-mode ; highlight local names matching current tag
+    ))
   (when (featurep submode) (add-to-list 'semantic-default-submodes submode)))
 
 ;; Activate semantic
@@ -41,7 +41,7 @@
 
 ;; allow gnu global as backend for semanticdb
 (when (and (require 'cedet-global nil 'noerror)
-			  (cedet-gnu-global-version-check t))
+           (cedet-gnu-global-version-check t))
   (semanticdb-enable-gnu-global-databases 'c-mode t)
   (semanticdb-enable-gnu-global-databases 'c++-mode t))
 

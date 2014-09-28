@@ -25,14 +25,14 @@
              '(nxml-mode
                "<!--\\|<[^/>]*[^/]>"         ;; regexp for start block
                "-->\\|</[^/>]*[^/]>"         ;; regexp for end block
-					"<!--"                        ;; regexp for comment start.
+               "<!--"                        ;; regexp for comment start.
                nxml-forward-element
                nil))
 
 (eval-after-load "nxml-mode"
   '(progn 
-	  (require 'semantic/bovine/xml)
-	  (require 'auto-complete-nxml)))
+     (require 'semantic/bovine/xml)
+     (require 'auto-complete-nxml)))
 (eval-after-load "rng-valid"
   '(add-to-list 'rng-schema-locating-files "/vol/nirobots/share/schemas.xml"))
 

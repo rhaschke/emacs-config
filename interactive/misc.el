@@ -12,7 +12,7 @@
 If FRAME is nil, apply to current frame."
   (interactive)
   (set-frame-parameter frame 'fullscreen
-		       (if (fullscreen-p frame) nil 'fullboth)))
+             (if (fullscreen-p frame) nil 'fullboth)))
 
 (defun count-words (start end)
     "Print number of words in the region."

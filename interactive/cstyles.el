@@ -18,18 +18,18 @@
 
 ;; set some styles based on the mode
 (setq c-default-style
-		'((java-mode . "java")
-		  (awk-mode . "awk")
-		  (other . "cc-mode")))
+      '((java-mode . "java")
+        (awk-mode . "awk")
+        (other . "cc-mode")))
 
 (c-add-style "cc-mode" 
   `("linux"
-	 (c-basic-offset  . 3)
-	 (tab-width       . ,c-basic-offset)
-	 (c-offsets-alist 
-	  (case-label   . 0)
-	  (innamespace  . 0)
-	  (inline-open  . 0))))
+    (c-basic-offset  . 3)
+    (tab-width       . ,c-basic-offset)
+    (c-offsets-alist 
+     (case-label   . 0)
+     (innamespace  . 0)
+     (inline-open  . 0))))
 
 (c-add-style "rsc"
   '((c-basic-offset             . 4)

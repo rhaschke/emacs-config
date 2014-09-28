@@ -23,10 +23,10 @@
   (require 'auto-complete-c-headers)
   (add-to-list 'ac-sources 'ac-source-c-headers)
   (setq achead:include-directories 
-		  (append (achead:get-include-directories-from-options
-					  (and (featurep 'semantic-clang-args-from-project)
-							 (semantic-clang-args-from-project)))
-					 semantic-dependency-system-include-path))
+        (append (achead:get-include-directories-from-options
+                 (and (featurep 'semantic-clang-args-from-project)
+                      (semantic-clang-args-from-project)))
+                semantic-dependency-system-include-path))
 )
 
 (defun mapprepend (prefix list)
@@ -37,16 +37,16 @@
   (interactive)
   "setup ac-clang-flags from project project and system settings"
   (with-current-buffer (or buffer (current-buffer))
-	 (set 'ac-clang-cflags
-			(append ac-clang-cflags 
-					  semantic-clang-system-includes
-					  (mapprepend "-include" semantic-lex-c-preprocessor-symbol-file)
-					  (mapprepend "-I" semantic-dependency-system-include-path)
-					  (semantic-clang-args-from-project)
-					  semantic-clang-arguments))
-	 
-	 (when (fboundp 'ac-clang-launch-completion-process)
-		(ac-clang-launch-completion-process))))
+    (set 'ac-clang-cflags
+         (append ac-clang-cflags 
+                 semantic-clang-system-includes
+                 (mapprepend "-include" semantic-lex-c-preprocessor-symbol-file)
+                 (mapprepend "-I" semantic-dependency-system-include-path)
+                 (semantic-clang-args-from-project)
+                 semantic-clang-arguments))
+    
+    (when (fboundp 'ac-clang-launch-completion-process)
+      (ac-clang-launch-completion-process))))
   
 
 (add-hook 'ede-minor-mode-hook 'rhaschke/ac-c-headers-init)
