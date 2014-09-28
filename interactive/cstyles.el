@@ -12,7 +12,9 @@
 
 ;; guess c-basic-offset and indent-tabs-mode: https://github.com/jscheid/dtrt-indent
 (require 'dtrt-indent)
-(dtrt-indent-mode 1)
+(custom-set-variables
+ '(dtrt-indent-mode t nil (dtrt-indent))
+ '(dtrt-indent-verbosity 3))
 
 ;; set some styles based on the mode
 (setq c-default-style
