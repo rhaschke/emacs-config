@@ -31,20 +31,26 @@ If FRAME is nil, apply to current frame."
                      (list (region-beginning) (region-end))
                    (list nil nil))))
   (save-excursion
-	(let ((have-region (and start end))
-		  (end (or end (point-max)))
-		  (start (or start (point-min))))
-	  (indent-region start end)
-	  (if have-region (delete-trailing-whitespace start end)
-		(delete-trailing-whitespace)))))
+   (let ((have-region (and start end))
+        (end (or end (point-max)))
+        (start (or start (point-min))))
+     (indent-region start end)
+     (if have-region (delete-trailing-whitespace start end)
+      (delete-trailing-whitespace)))))
 
 (defun dired-do-normalize-whitespace ()
   "apply normalize-whitespace function to all marked files in dired"
   (interactive)
   (dired-map-over-marks 
    (progn 
-	 (dired-find-file)
-	 (normalize-whitespace nil nil)
-	 (save-buffer)
-	 (kill-buffer)
-	 ) nil))
+    (dired-find-file)
+    (normalize-whitespace nil nil)
+    (save-buffer)
+    (kill-buffer)
+    ) nil))
+
+(defun toggle-indent-tabs-mode ()
+  "toggle indent-tabs-mode for current buffer"
+  (interactive)
+  (set (make-local-variable 'indent-tabs-mode)
+       (not indent-tabs-mode)))
