@@ -90,7 +90,15 @@
 					(concat config-dir "lib")
 					))
   (when (file-exists-p dir) (push dir load-path)))
-				  
+
+;; add all subdirs of lib to load-path
+(let* ((libdir (concat config-dir "lib"))
+		 (files (directory-files libdir t "^[^.].*")))
+  (dolist (file files)
+	 (and (file-directory-p file)
+			(not (member file '("RCS" "CVS" "rcs" "cvs" "semantic")))
+			(push file load-path))))
+
 ;; load custom settings
 (setq custom-file (concat user-emacs-directory "custom.el"))
 
