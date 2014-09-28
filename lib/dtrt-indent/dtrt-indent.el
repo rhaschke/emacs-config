@@ -804,6 +804,7 @@ merged with offset %s (%.2f%% deviation, limit %.2f%%)"
                        dtrt-indent-min-indent-superiority))
                "best guess not much better than second best guess"))))
 
+        (when (> total-lines dtrt-indent-min-relevant-lines) 
         (cond
          ((or (= 0 hard-tab-percentage)
               (>= (/ soft-tab-percentage
@@ -817,7 +818,7 @@ merged with offset %s (%.2f%% deviation, limit %.2f%%)"
                      soft-tab-percentage)
                   (+ 1.0 (/ dtrt-indent-min-hard-tab-superiority 100.0))))
          (setq change-indent-tabs-mode t)
-         (setq indent-tabs-mode-setting t)))
+         (setq indent-tabs-mode-setting t))))
 
         (list (cons :histogram (car histogram-and-total-lines))
               (cons :total-lines total-lines)
