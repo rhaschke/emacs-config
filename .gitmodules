@@ -1,8 +1,6 @@
 [submodule "lib/clang-async"]
 	path = lib/clang-async
 	url = https://github.com/Golevka/emacs-clang-complete-async.git
-	branch = master
 [submodule "lib/rosemacs"]
 	path = lib/rosemacs
-	url = https://github.com/moesenle/rosemacs-debs
-	branch = master
+	url = https://kforge.ros.org/rosemacs/git
