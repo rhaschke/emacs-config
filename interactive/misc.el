@@ -53,4 +53,9 @@ If FRAME is nil, apply to current frame."
   "toggle indent-tabs-mode for current buffer"
   (interactive)
   (set (make-local-variable 'indent-tabs-mode)
-       (not indent-tabs-mode)))
+       (not indent-tabs-mode))
+  (message "indent-tabs-mode: %s" indent-tabs-mode)
+  ; disable/enable smart-tabs-mode accordingly
+  (if (and (boundp 'smart-tabs-mode) smart-tabs-mode)
+      (smart-tabs-mode indent-tabs-mode))
+)
