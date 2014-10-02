@@ -1000,10 +1000,10 @@ Disable dtrt-indent if offset explicitly set."
 (add-hook 'find-file-hook 'dtrt-indent-find-file-hook)
 
 ; Customize mode line
-(or global-mode-string (setq global-mode-string '("")))
-(or (memq 'dtrt-indent-mode-line-info global-mode-string)
-    (setq global-mode-string
-          (append global-mode-string '(dtrt-indent-mode-line-info))))
+;; (or global-mode-string (setq global-mode-string '("")))
+;; (or (memq 'dtrt-indent-mode-line-info global-mode-string)
+;;     (setq global-mode-string
+;;           (append global-mode-string '(dtrt-indent-mode-line-info))))
 
 (autoload 'dtrt-indent-diagnosis "dtrt-indent-diag"
   "Guess indentation for the current buffer and output diagnostics."
