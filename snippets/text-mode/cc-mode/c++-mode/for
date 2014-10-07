@@ -1,0 +1,6 @@
+#name : for iterator
+# --
+for (${1:std::vector<>}::${2:const_iterator} 
+	 it=${3:container}.begin(), end=$3.end(); it!=end; ++it) {
+    $0
+}

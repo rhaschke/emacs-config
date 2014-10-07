@@ -27,8 +27,15 @@
 ;; turn off abbrev-mode
 (abbrev-mode 0)
 
-;; configure whitespace mode
+;; customize whitespace mode
 (custom-set-variables
  '(whitespace-style '(face tabs tab-mark space-before-tab empty)))
 (custom-set-faces
  '(whitespace-tab ((t (:background "white smoke" :foreground "lightgray")))))
+
+;; customize yasnippet 
+(custom-set-variables
+ '(yas/root-directory (let ((add (list (concat config-dir "snippets")))
+                            (orig (if (listp yas/root-directory)
+                                      yas/root-directory (list yas/root-directory))))
+                        (nconc add orig))))
