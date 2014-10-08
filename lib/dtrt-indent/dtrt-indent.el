@@ -918,6 +918,11 @@ Indentation offset set with file variable; not adjusted")
                 (append dtrt-indent-original-indent
                         (list indent-tabs-mode
                               (local-variable-p indent-tabs-mode))))
+          ; disable smart-tabs-mode when disabling indent-tabs-mode
+          (when (and (featurep 'smart-tabs-mode)
+                     smart-tabs-mode
+                     (not indent-tabs-mode-setting))
+            (smart-tabs-mode -1))
           ; actually adapt indent-tabs-mode
           (set (make-local-variable 'indent-tabs-mode)
                indent-tabs-mode-setting))
