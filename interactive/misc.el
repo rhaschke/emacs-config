@@ -54,6 +54,8 @@ If FRAME is nil, apply to current frame."
   (interactive)
   (set (make-local-variable 'indent-tabs-mode)
        (not indent-tabs-mode))
+  (when (featurep 'smart-tabs-mode)
+    (if indent-tabs-mode (smart-tabs-mode 1) (smart-tabs-mode -1)))
   (message "%s indent-tabs-mode" 
            (cond (indent-tabs-mode "enabled")
                  (t "disabled"))))
