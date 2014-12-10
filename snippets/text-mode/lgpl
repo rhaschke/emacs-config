@@ -3,12 +3,12 @@
 # --
 /* ============================================================
  *
- * This file is a part of the RSC project
+ * This file is a part of the $1 project
  *
  * Copyright (C) `(format-time-string "%Y")` by ${2:Robert Haschke} <${3:rhaschke} at techfak dot uni-bielefeld dot de>
  *
  * This file may be licensed under the terms of the
- * GNU Lesser General Public License Version 3 (the ``LGPL''),
+ * GNU Lesser General Public License Version 3 (the "LGPL"),
  * or (at your option) any later version.
  *
  * Software distributed under the License is distributed
