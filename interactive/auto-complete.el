@@ -8,7 +8,8 @@
   (ac-flyspell-workaround))
 
 ;; https://github.com/brianjcj/auto-complete-clang
-(require 'auto-complete-clang)
+(when (featurep 'auto-complete-config)
+  (require 'auto-complete-clang))
 
 ;; https://github.com/Golevka/emacs-clang-complete-async
 ;(require 'auto-complete-clang-async)
@@ -49,6 +50,7 @@
       (ac-clang-launch-completion-process))))
   
 
-(add-hook 'ede-minor-mode-hook 'rhaschke/ac-c-headers-init)
+(when (featurep 'auto-complete-config)
+  (add-hook 'ede-minor-mode-hook 'rhaschke/ac-c-headers-init))
 (when (featurep 'semantic-clang-args-from-project)
   (add-hook 'ede-minor-mode-hook 'apply-ac-clang-settings))

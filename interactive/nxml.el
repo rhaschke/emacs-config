@@ -32,15 +32,12 @@
 (eval-after-load "nxml-mode"
   '(progn 
      (require 'semantic/bovine/xml)
-     (require 'auto-complete-nxml)))
+     (when (featurep 'auto-complete-config)
+       (require 'auto-complete-nxml))))
 (eval-after-load "rng-valid"
   '(add-to-list 'rng-schema-locating-files "/vol/nirobots/share/schemas.xml"))
-
-; enable auto-completion in nxml
-(add-to-list 'ac-modes 'nxml-mode)
 
 (defun rhaschke/nxml-mode-hook ()
   (hs-minor-mode))
   
 (add-hook 'nxml-mode-hook 'rhaschke/nxml-mode-hook)
-
