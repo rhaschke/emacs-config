@@ -44,6 +44,8 @@ If FRAME is nil, apply to current frame."
   (dired-map-over-marks 
    (progn 
     (dired-find-file)
+    (setq-local indent-tabs-mode 1)
+    (smart-tabs-mode 1)
     (normalize-whitespace nil nil)
     (save-buffer)
     (kill-buffer)
