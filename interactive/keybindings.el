@@ -8,7 +8,7 @@
 ;;; indentation
 (defun indent-block (amount)
   "indent block by amount"
-  (interactive)
+  (interactive "Nindentation amount: ")
   (indent-rigidly (region-beginning) (region-end) amount))
 (global-set-key [M-left]   '(lambda () (interactive) (indent-block (* -1 standard-indent))))
 (global-set-key [M-right]  '(lambda () (interactive) (indent-block (*  1 standard-indent))))
