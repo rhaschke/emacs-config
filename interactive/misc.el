@@ -61,3 +61,14 @@ If FRAME is nil, apply to current frame."
   (message "%s indent-tabs-mode" 
            (cond (indent-tabs-mode "enabled")
                  (t "disabled"))))
+
+(defun dired-do-recode ()
+  "recode all marked files in dired to utf8"
+  (interactive)
+  (dired-map-over-marks 
+   (progn
+    (dired-find-file)
+    (set-buffer-file-coding-system 'utf-8)
+    (save-buffer)
+    (kill-buffer)
+    ) nil))
