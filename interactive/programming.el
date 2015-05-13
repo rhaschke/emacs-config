@@ -33,3 +33,6 @@
 ;; load json-mode on request
 (add-to-list 'auto-mode-alist '("\\.\\(project\\|distribution\\|template\\)" . json-mode))
 (autoload 'json-mode "json-mode" "JSON mode" t)
+
+;; markdown mode
+(add-to-list 'auto-mode-alist '("\\.md$" . markdown-mode))
