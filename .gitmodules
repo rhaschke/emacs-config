@@ -3,4 +3,5 @@
 	url = https://github.com/Golevka/emacs-clang-complete-async.git
 [submodule "lib/rosemacs"]
 	path = lib/rosemacs
-	url = https://kforge.ros.org/rosemacs/git
+	url = https://github.com/moesenle/rosemacs-debs
+	branch = master
