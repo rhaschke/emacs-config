@@ -3,6 +3,9 @@
   (eldoc-mode 1))
 (add-hook 'emacs-lisp-mode-hook 'rhaschke/elisp-mode-hook)
 
+;;; enable cmake-mode
+(autoload 'cmake-mode "cmake-mode" "cmake mode" t)
+
 ;;; Drupal mode
 (defun drupal-mode ()
   (require 'php-mode)
