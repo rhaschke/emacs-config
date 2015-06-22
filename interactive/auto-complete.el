@@ -27,9 +27,10 @@
         (append (achead:get-include-directories-from-options
                  (and (featurep 'semantic-clang-args-from-project)
                       (semantic-clang-args-from-project)))
-                semantic-dependency-system-include-path))
+                (and (boundp 'semantic-dependency-system-include-path)
+                     semantic-dependency-system-include-path)))
 )
-
+(append nil nil)
 (defun mapprepend (prefix list)
   "prepend every string in list with prefix"
   (mapcar (lambda (x) (concat prefix x)) list))
@@ -42,7 +43,8 @@
          (append ac-clang-cflags 
                  semantic-clang-system-includes
                  (mapprepend "-include" semantic-lex-c-preprocessor-symbol-file)
-                 (mapprepend "-I" semantic-dependency-system-include-path)
+                 (and (boundp 'semantic-dependency-system-include-path)
+                      (mapprepend "-I" semantic-dependency-system-include-path))
                  (semantic-clang-args-from-project)
                  semantic-clang-arguments))
     

@@ -34,4 +34,4 @@
 (invoke-rosemacs)
 
 ;; Optional but highly recommended: add a prefix for quick access to the rosemacs commands
-(global-set-key "\C-x\C-r" ros-keymap)
+(global-set-key "\C-x\C-r" 'ros-keymap)
