@@ -23,6 +23,10 @@
 (add-hook 'c-mode-common-hook 'rhaschke/common-text-mode-hook)
 (add-hook 'python-mode-hook 'rhaschke/common-text-mode-hook)
 (add-hook 'cmake-mode-hook 'rhaschke/common-text-mode-hook)
+(add-hook 'sh-mode-hook 'rhaschke/common-text-mode-hook)
+
+;; delete trailing spaces on save
+(add-hook 'before-save-hook 'delete-trailing-whitespace)
 
 ;; turn off abbrev-mode
 (abbrev-mode 0)
