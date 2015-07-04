@@ -39,3 +39,7 @@
 
 ;; markdown mode
 (add-to-list 'auto-mode-alist '("\\.md$" . markdown-mode))
+
+;; sh-mode
+(setq sh-basic-offset tab-width)
+(setq sh-indentation tab-width)

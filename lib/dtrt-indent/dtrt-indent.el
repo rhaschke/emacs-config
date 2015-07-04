@@ -275,6 +275,7 @@ quote, for example.")
     (ruby-mode       ruby          ruby-indent-level)    ; Ruby
     (ada-mode        ada           ada-indent)           ; Ada
     (sh-mode         shell         sh-basic-offset)      ; Shell Script
+    (tcl-mode        shell         tcl-indent-level)     ; Tcl Script
     (css-mode        css           css-indent-offset)    ; CSS
     (pascal-mode     pascal        pascal-indent-level)  ; Pascal
     (default         default       standard-indent))     ; default fallback
@@ -804,7 +805,7 @@ merged with offset %s (%.2f%% deviation, limit %.2f%%)"
                        dtrt-indent-min-indent-superiority))
                "best guess not much better than second best guess"))))
 
-        (when (> total-lines dtrt-indent-min-relevant-lines) 
+        (when (> total-lines dtrt-indent-min-relevant-lines)
         (cond
          ((or (= 0 hard-tab-percentage)
               (>= (/ soft-tab-percentage

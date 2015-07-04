@@ -19,11 +19,8 @@
   (whitespace-mode))
 
 (add-hook 'text-mode-hook 'rhaschke/common-text-mode-hook)
-(add-hook 'emacs-lisp-mode-hook 'rhaschke/common-text-mode-hook)
-(add-hook 'c-mode-common-hook 'rhaschke/common-text-mode-hook)
-(add-hook 'python-mode-hook 'rhaschke/common-text-mode-hook)
+(add-hook 'prog-mode-hook 'rhaschke/common-text-mode-hook)
 (add-hook 'cmake-mode-hook 'rhaschke/common-text-mode-hook)
-(add-hook 'sh-mode-hook 'rhaschke/common-text-mode-hook)
 
 ;; delete trailing spaces on save
 (add-hook 'before-save-hook 'delete-trailing-whitespace)
@@ -37,7 +34,7 @@
 (custom-set-faces
  '(whitespace-tab ((t (:background "white smoke" :foreground "lightgray")))))
 
-;; customize yasnippet 
+;; customize yasnippet
 (custom-set-variables
  '(yas/root-directory (let ((add (list (concat config-dir "snippets")))
                             (orig (if (listp yas/root-directory)
