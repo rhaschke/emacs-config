@@ -11,12 +11,12 @@
       (require 'rng-loc)
       (pushnew path rng-schema-locating-files)))
   (add-to-list 'auto-mode-alist '("\\.launch$" . nxml-mode))
-  (add-to-list 'auto-mode-alist '("\\.urdf" . xml-mode))
-  (add-to-list 'auto-mode-alist '("\\.xacro" . xml-mode))
+  (add-to-list 'auto-mode-alist '("\\.urdf" . nxml-mode))
+  (add-to-list 'auto-mode-alist '("\\.xacro" . nxml-mode))
   (add-to-list 'auto-mode-alist '("\\.cmake\\.em" . cmake-mode))
 
   ;; rosbag view mode
-  (add-to-list 'auto-mode-alist '("\.bag$" . rosbag-view-mode))  
+  (add-to-list 'auto-mode-alist '("\.bag$" . rosbag-view-mode))
 
   ;; msg and srv files: for now use gdb-script-mode
   (add-to-list 'auto-mode-alist '("\\.msg\\'" . gdb-script-mode))
