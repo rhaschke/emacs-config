@@ -133,3 +133,5 @@
 (if noninteractive
   (load-user-elisp-directory config-noninteractive-dir)
   (load-user-elisp-directory config-interactive-dir))
+
+(server-start)
