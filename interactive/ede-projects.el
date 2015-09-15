@@ -4,9 +4,9 @@
 
 (defun rhaschke/ede-current-project (&optional buffer-or-filename)
   "fetch ede project from argument"
-  (let* ((filename (cond 
+  (let* ((filename (cond
                    ; arg is buffer
-                   ((bufferp buffer-or-filename) 
+                   ((bufferp buffer-or-filename)
                     (or (buffer-file-name buffer-or-filename) default-directory))
                    ; arg is string: interprete as filename
                    ((and (stringp buffer-or-filename)
@@ -93,6 +93,15 @@
  ;; backquote ` allows to selectively evaluate parts of a quoted list (marked with ,)
  :local-variables     '((compile-command . (lambda() (rhaschke/std-compile-cmd (concat "o." (getenv "ARCH")))))))
 
+(defun rhaschke/find-first-file (list &optional file-pattern)
+  "return first existing file (## in file-pattern replaced by elements of list)"
+  (let ((result)
+        (file-pattern (or file-pattern "##")))
+    (dolist (elt list result)
+      (let ((filename (replace-regexp-in-string "##" elt file-pattern)))
+        (if (and (not result) (file-exists-p filename))
+            (setq result filename))))))
+
 (ede-cpp-root-project
  "cbf"
  :name                "cbf"
@@ -101,5 +110,6 @@
  :system-include-path '()
  :spp-table           '(("CBF_HAVE_XSD" . "1"))
  ;; backquote ` allows to selectively evaluate parts of a quoted list (marked with ,)
- :spp-files           `(,(concat "o." (getenv "ARCH") "/libcbf/cbf/config.h"))
- :local-variables     '((compile-command . (lambda() (rhaschke/std-compile-cmd (concat "o." (getenv "ARCH")))))))
+ :spp-files           `(,(rhaschke/find-first-file '("build" "o.linx86_64") "##/libcbf/cbf/config.h"))
+ :local-variables     '((compile-command . (lambda() (rhaschke/std-compile-cmd
+                                                      (rhaschke/find-first-file '("build" "o.linx86_64")))))))
