@@ -101,15 +101,3 @@
       (let ((filename (replace-regexp-in-string "##" elt file-pattern)))
         (if (and (not result) (file-exists-p filename))
             (setq result filename))))))
-
-(ede-cpp-root-project
- "cbf"
- :name                "cbf"
- :file                "~/src/cbf/CMakeLists.txt"
- :include-path        '("libcbf")
- :system-include-path '()
- :spp-table           '(("CBF_HAVE_XSD" . "1"))
- ;; backquote ` allows to selectively evaluate parts of a quoted list (marked with ,)
- :spp-files           `(,(rhaschke/find-first-file '("build" "o.linx86_64") "##/libcbf/cbf/config.h"))
- :local-variables     '((compile-command . (lambda() (rhaschke/std-compile-cmd
-                                                      (rhaschke/find-first-file '("build" "o.linx86_64")))))))
