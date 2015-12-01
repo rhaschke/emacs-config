@@ -7,10 +7,10 @@
 (unless (featurep 'auto-complete-config)
   (message "auto-complete package not available")
   ; show completions when idle
-  (add-to-list 'semantic-default-submodes 
+  (add-to-list 'semantic-default-submodes
                'global-semantic-idle-completions-mode))
 
-(dolist (submode 
+(dolist (submode
   '(global-semantic-mru-bookmark-mode ; navigation to previously visited tags
     global-semanticdb-minor-mode ; maintain tag database
     global-semantic-idle-scheduler-mode ; automatic parsing (+ other stuff) in idle time
@@ -22,7 +22,7 @@
   (when (featurep submode) (add-to-list 'semantic-default-submodes submode)))
 
 ;; Activate semantic
-(semantic-mode 1)
+;(semantic-mode 1)
 
 ;; submodules of semantic
 (require 'semantic/bovine/c) ; support c/c++ parsing
@@ -45,7 +45,7 @@
   (semanticdb-enable-gnu-global-databases 'c-mode t)
   (semanticdb-enable-gnu-global-databases 'c++-mode t))
 
-;; potentially intersting other packages: 
+;; potentially intersting other packages:
 ;;(require 'semantic-tag-folding) ; folding of tags with fringe symbol
 (require 'eassist nil 'noerror) ; http://www.emacswiki.org/emacs/EAssist
 
