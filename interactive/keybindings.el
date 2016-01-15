@@ -21,7 +21,7 @@
         ((looking-at "\\s\)") (forward-char 1) (backward-list 1))
         (t (self-insert-command (or arg 1)))))
 (global-set-key "^"   'match-paren)
-(global-set-key [C-^] '(insert "^"))
+(global-set-key [C-^] 'match-paren)
 
 (global-set-key [f1]    'help-for-help)
 (global-set-key [M-f1]  'info)

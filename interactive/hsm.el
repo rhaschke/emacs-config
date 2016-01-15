@@ -260,12 +260,15 @@ Both, nodes and events are in reverse order"
 ;;;###autoload
 (defun semantic-default-hsm-setup ()
   "Setup hook function for hsm and semantic."
+  (message "Activating semantic mode")
+  (semantic-mode 1)
   (setq
    semantic-parser-name  "hsm"
    semantic-symbol->name-assoc-list '((state . "states")
                                       (event . "events")
                                       (include . "includes"))
-   semantic-idle-breadcrumbs-separator ":"))
+   semantic-idle-breadcrumbs-separator ":")
+  (ecb-minor-mode 1))
 
 ;;;###autoload
 (add-hook 'hsm-mode-hook 'semantic-default-hsm-setup)

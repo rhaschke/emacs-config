@@ -23,7 +23,7 @@
 (add-hook 'cmake-mode-hook 'rhaschke/common-text-mode-hook)
 
 ;; delete trailing spaces on save
-(add-hook 'before-save-hook 'delete-trailing-whitespace)
+;(add-hook 'before-save-hook 'delete-trailing-whitespace)
 
 ;; turn off abbrev-mode
 (abbrev-mode 0)
